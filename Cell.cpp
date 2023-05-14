@@ -129,7 +129,9 @@ static bool validFormula(const char* str)
 
 static bool validString(const char* str)
 {
-
+	if (*str != '"') return false;
+	if (*(str + strlen(str) - 1) != '"') return false; //strings start and end with "
+	return true;
 }
 
 void Cell::setCellType(const char* str)
@@ -137,9 +139,13 @@ void Cell::setCellType(const char* str)
 	if (validInteger(str)) _type = CellType::integer;
 	else if (validDouble(str)) _type = CellType::fraction;
 	else if (validFormula(str)) _type = CellType::formula;
+	else if(validString(str)) _type = CellType::string;
 	else
-		_type = CellType::string;
+	{
+		throw std::invalid_argument(str);
+	}
 }
+		
 
 void Cell::setValue(std::stringstream& ss)
 {
@@ -161,5 +167,12 @@ void Cell::setValue(std::stringstream& ss)
 	buffer[len - endingWhiteSpaces - 1] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
 
 	_value = buffer + leadingWhiteSpaces;// we shift the buffer with the number of leading white spaces,
-	setCellType(buffer + leadingWhiteSpaces); // so we only pass the actual text
+	try
+	{
+		setCellType(buffer + leadingWhiteSpaces); // so we only pass the actual text
+	}
+	catch (std::invalid_argument& ex)
+	{
+		throw;
+	}
 }
