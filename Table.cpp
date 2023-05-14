@@ -19,7 +19,7 @@ void Table::readFromFile(const char* fileName)
 	std::ifstream ifs(fileName, std::ios::in);
 
 	if (!ifs.is_open())
-		throw std::invalid_argument("File not found!");
+		throw std::runtime_error("File not found!");
 
 	size_t linesCount = countCharacterOccurances(ifs, '\n');
 	_rowsCount = linesCount;
@@ -27,6 +27,13 @@ void Table::readFromFile(const char* fileName)
 
 	for (int i = 0; i < linesCount; i++)
 	{
-		_rows[i].readRowFromFile(ifs);
+		try
+		{
+			_rows[i].readRowFromFile(ifs);
+		}
+		catch (std::invalid_argument& ex)
+		{
+			std::cout << "Error: row " << i << ", " << ex.what() << " Unknown data type";
+		}
 	}
 }
