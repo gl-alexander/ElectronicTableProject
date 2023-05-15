@@ -164,12 +164,14 @@ void Cell::setValue(std::stringstream& ss)
 	int leadingWhiteSpaces = countLeadingSymbols(buffer, ' ');
 	int endingWhiteSpaces = countEndSymbols(buffer, len, ' ');
 
-	buffer[len - endingWhiteSpaces - 1] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
+	buffer[len - endingWhiteSpaces] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
 
 	_value = buffer + leadingWhiteSpaces;// we shift the buffer with the number of leading white spaces,
+
+	//setting the cell type
 	try
 	{
-		setCellType(buffer + leadingWhiteSpaces); // so we only pass the actual text
+		setCellType(buffer + leadingWhiteSpaces); 
 	}
 	catch (std::invalid_argument& ex)
 	{
