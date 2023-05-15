@@ -176,3 +176,13 @@ void Cell::setValue(std::stringstream& ss)
 		throw;
 	}
 }
+
+
+const CellType& Cell::getType() const
+{
+	return _type;
+}
+const MyString& Cell::getValue() const
+{
+	return _value;
+}
