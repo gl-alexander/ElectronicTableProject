@@ -78,14 +78,28 @@ Row& Row::operator=(const Row& other)
 	}
 	return *this;
 }
-Row::~Row()
+Row::~Row() noexcept
 {
 	free();
 }
 
+Row::Row(Row&& other) noexcept
+{
+	moveFrom(std::move(other));
+}
+Row& Row::operator=(Row&& other) noexcept
+{
+	if (this != &other)
+	{
+		free();
+		moveFrom(std::move(other));
+	}
+	return *this;
+}
+
 void Row::readRowFromFile(std::ifstream& ifs)
 {
-	char buffer[BUFFER_LEN] = { 0 };
+	char buffer[BUFFER_LEN];
 	ifs.getline(buffer, BUFFER_LEN);
 	size_t inputLenght = strlen(buffer);
 	size_t separatorsCount = countCharOccurances(buffer, SEPARATOR);
@@ -98,6 +112,7 @@ void Row::readRowFromFile(std::ifstream& ifs)
 	}
 	
 	_cellCount = separatorsCount + 1;
+
 	_cells = new Cell[separatorsCount + 1]; // if there are n separators, we have n + 1 cells
 	
 	std::stringstream ss(buffer);
