@@ -9,21 +9,22 @@ class Table
 
 	void copyFrom(const Table& other);
 	void free();
-	void moveFrom();
+	void moveFrom(Table&& other);
 
 	void readFromFile(const char* fileName);
 public:
 	Table() = default;
 	Table(const Table& other);
 	Table& operator=(const Table& other);
-	~Table();
+	~Table() noexcept;
 
-	Table(Table&& other);
-	Table& operator=(Table&& other);
+	Table(Table&& other) noexcept;
+	Table& operator=(Table&& other) noexcept;
 
 	Table(const char* fileName);
 
 	void print() const;
+
 
 };
 
