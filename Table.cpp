@@ -9,8 +9,8 @@ static int countCharacterOccurances(std::ifstream& ifs, char ch)
 	{
 		if (ifs.get() == ch) counter++;
 	}
-
-	ifs.seekg(originalPosition);
+	ifs.clear();
+	ifs.seekg(std::ios::beg);
 	return counter;
 }
 
@@ -77,10 +77,11 @@ void Table::readFromFile(const char* fileName)
 		throw std::runtime_error("File not found!");
 
 	size_t linesCount = countCharacterOccurances(ifs, '\n');
-	_rowsCount = linesCount;
-	_rows = new Row[linesCount];
+	std::cout << linesCount << std::endl;
+	_rowsCount = linesCount + 1;
+	_rows = new Row[_rowsCount];
 
-	for (int i = 0; i < linesCount; i++)
+	for (int i = 0; i < _rowsCount; i++)
 	{
 		try
 		{
@@ -98,3 +99,10 @@ Table::Table(const char* fileName)
 	readFromFile(fileName);
 }
 
+void Table::printTypes() const
+{
+	for (int i = 0; i < _rowsCount; i++)
+	{
+		_rows[i].printValueTypes();
+	}
+}
