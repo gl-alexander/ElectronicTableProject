@@ -19,8 +19,11 @@ class Cell
 	MyString _value;
 	CellType _type;
 
+	void setCellType(const char* str);
 public:
-	void setValue(MyString str);
+	Cell() = default;
+	Cell(std::stringstream& ss);
+
 	void setValue(std::stringstream& ss);
 
 	const CellType& getType() const;
