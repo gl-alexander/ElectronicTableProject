@@ -134,6 +134,11 @@ static bool validString(const char* str)
 	return true;
 }
 
+Cell::Cell(std::stringstream& ss)
+{
+	setValue(ss);
+}
+
 void Cell::setCellType(const char* str)
 {
 	if (validInteger(str)) _type = CellType::integer;
