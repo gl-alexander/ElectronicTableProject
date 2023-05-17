@@ -6,7 +6,6 @@ namespace
 	const size_t INITIAL_CAPACITY = 8;
 }
 
-
 template <typename T>
 class MyVector
 {
@@ -20,8 +19,8 @@ class MyVector
 	void free();
 	void moveFrom(MyVector<T>&& other);
 public:
-	MyVector();
-	explicit MyVector(size_t capacity);
+	MyVector() = default;
+	MyVector(size_t capacity);
 	MyVector(const MyVector<T>& other);
 	MyVector<T>& operator=(const MyVector<T>& other);
 	~MyVector();
@@ -69,7 +68,7 @@ void MyVector<T>::moveFrom(MyVector<T>&& other)
 {
 	_size = other._size;
 	_capacity = other._capacity
-	_data = other._data;
+		_data = other._data;
 	delete[] other._data;
 	other._capacity = 0;
 	other._size = 0;
@@ -82,10 +81,6 @@ MyVector<T>::MyVector(size_t capacity)
 	_capacity = capacity;
 	_data = new T[capacity];
 }
-
-template <typename T>
-MyVector<T>::MyVector() : MyVector(INITIAL_CAPACITY)
-{}
 
 template <typename T>
 MyVector<T>::MyVector(const MyVector<T>& other)
@@ -129,8 +124,12 @@ MyVector<T>& MyVector<T>::operator=(MyVector<T>&& other)
 template <typename T>
 void MyVector<T>::resize(size_t newCapacity)
 {
+	if (newCapacity == 0)
+		newCapacity = INITIAL_CAPACITY; // on the initial resize, we set the capacity to 8
+
+
 	T* temp = new T[newCapacity];
-	
+
 	for (int i = 0; i < _size; i++)
 	{
 		temp[i] = std::move(_data[i]); // we use the move operator, if T has one
@@ -145,8 +144,8 @@ template <typename T>
 void MyVector<T>::push_back(const T& obj)
 {
 	if (_size == _capacity)
-		resize();
-	
+		resize(_capacity * 2);
+
 	_data[_size++] = obj;
 }
 
@@ -154,7 +153,7 @@ template <typename T>
 void MyVector<T>::push_back(T&& obj)
 {
 	if (_size == _capacity)
-		resize();
+		resize(_capacity * 2);
 
 	_data[_size++] = std::move(obj);
 }
@@ -203,4 +202,3 @@ const T& MyVector<T>::operator[](size_t ind) const
 
 	return _data[ind];
 }
-	
