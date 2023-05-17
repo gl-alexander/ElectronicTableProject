@@ -9,6 +9,9 @@ class Row
 	size_t _cellCount = 0;
 
 public:
+	Row() = default;
+	Row(std::ifstream& ifs);
+
 	void readRowFromFile(std::ifstream& ifs);
 
 	Cell& operator[](int ind);
