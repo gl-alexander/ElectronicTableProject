@@ -41,83 +41,28 @@ static const char* converToString(int num)
 }
 
 
-void Row::copyFrom(const Row& other)
-{
-	_cellCount = other._cellCount;
-	_cells = new Cell[other._cellCount];
-	for (int i = 0; i < other._cellCount; i++)
-	{
-		_cells[i] = other._cells[i];
-	}
-}
-
-void Row::free()
-{
-	delete[] _cells;
-	_cells = nullptr;
-	_cellCount = 0;
-}
-
-void Row::moveFrom(Row&& other)
-{
-	_cells = other._cells;
-	_cellCount = other._cellCount;
-	delete[] other._cells;
-}
-
-Row::Row(const Row& other)
-{
-	copyFrom(other);
-}
-Row& Row::operator=(const Row& other)
-{
-	if (this != &other)
-	{
-		free();
-		copyFrom(other);
-	}
-	return *this;
-}
-Row::~Row() noexcept
-{
-	free();
-}
-
-Row::Row(Row&& other) noexcept
-{
-	moveFrom(std::move(other));
-}
-Row& Row::operator=(Row&& other) noexcept
-{
-	if (this != &other)
-	{
-		free();
-		moveFrom(std::move(other));
-	}
-	return *this;
-}
-
 void Row::readRowFromFile(std::ifstream& ifs)
 {
 	char buffer[BUFFER_LEN];
 	ifs.getline(buffer, BUFFER_LEN);
+
 	size_t inputLenght = strlen(buffer);
 	size_t separatorsCount = countCharOccurances(buffer, SEPARATOR);
 
 	if (inputLenght == 0)
 	{
-		_cells = nullptr;
+		_cells.clear();
 		_cellCount = 0;
 		return;
 	}
 	
-	_cellCount = separatorsCount + 1;
+	_cellCount = separatorsCount + 1; // if there are n separators, we have n + 1 cells
 
-	_cells = new Cell[separatorsCount + 1]; // if there are n separators, we have n + 1 cells
+	_cells = MyVector<Cell>(_cellCount);
 	
 	std::stringstream ss(buffer);
 
-	for (int i = 0; i <= separatorsCount; i++)
+	for (int i = 0; i < _cellCount; i++)
 	{
 		try
 		{
@@ -126,12 +71,40 @@ void Row::readRowFromFile(std::ifstream& ifs)
 		catch (std::invalid_argument& ex)
 		{
 			const char* columnIndStr = converToString(i);
-			MyString errorMessage = "col ";
-			errorMessage += columnIndStr;
-			errorMessage += " ";
-			errorMessage += ex.what();
+
+			MyString errorMessage = "col " + MyString(columnIndStr) + " " + MyString(ex.what());
 			delete[] columnIndStr;
+
 			throw std::invalid_argument(errorMessage.c_str());
 		}
 	}
+}
+
+
+void Row::printValueTypes() const
+{
+	for (int i = 0; i < _cellCount; i++)
+	{
+		switch (_cells[i].getType())
+		{
+		case CellType::empty:
+			std::cout << "empty ";
+			break;
+		case CellType::integer:
+			std::cout << "integer ";
+			break;
+		case CellType::string:
+			std::cout << "string ";
+			break;
+		case CellType::fraction:
+			std::cout << "fraction ";
+			break;
+		case CellType::formula:
+			std::cout << "formula ";
+			break;
+		default:
+			std::cout << "Unknown ";
+		}
+	}
+	std::cout << std::endl;
 }
