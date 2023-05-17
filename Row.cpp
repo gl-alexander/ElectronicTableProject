@@ -41,6 +41,11 @@ static const char* converToString(int num)
 }
 
 
+Row::Row(std::ifstream& ifs)
+{
+	readRowFromFile(ifs);
+}
+
 void Row::readRowFromFile(std::ifstream& ifs)
 {
 	char buffer[BUFFER_LEN];
@@ -66,7 +71,7 @@ void Row::readRowFromFile(std::ifstream& ifs)
 	{
 		try
 		{
-			_cells[i].setValue(ss);
+			_cells.push_back(Cell(ss));
 		}
 		catch (std::invalid_argument& ex)
 		{
