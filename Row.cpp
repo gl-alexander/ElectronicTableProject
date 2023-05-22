@@ -57,17 +57,14 @@ void Row::readRowFromFile(std::ifstream& ifs)
 	if (inputLenght == 0)
 	{
 		_cells.clear();
-		_cellCount = 0;
 		return;
 	}
 	
-	_cellCount = separatorsCount + 1; // if there are n separators, we have n + 1 cells
-
-	_cells = MyVector<Cell>(_cellCount);
+	_cells = MyVector<Cell>(separatorsCount + 1); // if there are n separators, we have n + 1 cells
 	
 	std::stringstream ss(buffer);
 
-	for (int i = 0; i < _cellCount; i++)
+	for (int i = 0; i <= separatorsCount; i++)
 	{
 		try
 		{
@@ -88,7 +85,8 @@ void Row::readRowFromFile(std::ifstream& ifs)
 
 void Row::printValueTypes() const
 {
-	for (int i = 0; i < _cellCount; i++)
+	unsigned cellsCount = _cells.size();
+	for (int i = 0; i < cellsCount; i++)
 	{
 		switch (_cells[i].getType())
 		{
@@ -112,4 +110,22 @@ void Row::printValueTypes() const
 		}
 	}
 	std::cout << std::endl;
+}
+
+unsigned Row::lenght() const
+{
+	return _cells.size();
+}
+
+void Row::printRow(size_t margin) const
+{
+	size_t cellsCount = _cells.size();
+	for (int i = 0; i < margin; i++)
+	{
+		if (i >= cellsCount)
+		{
+			std::cout << " " << SEPARATOR;
+		}
+		std::cout << _cells[i].getValue() << SEPARATOR;
+	}
 }
