@@ -5,10 +5,9 @@
 class Table
 {
 	MyVector<Row> _rows;
-	size_t _rowsCount = 0;
 
 	void readFromFile(const char* fileName);
-
+	unsigned getLongestRowLenght() const;
 public:
 	Table(const char* fileName);
 
