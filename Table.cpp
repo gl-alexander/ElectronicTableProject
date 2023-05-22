@@ -1,5 +1,8 @@
 #include "Table.h"
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+
 static int countCharacterOccurances(std::ifstream& ifs, char ch)
 {
 	unsigned counter = 0;
@@ -22,15 +25,14 @@ void Table::readFromFile(const char* fileName)
 		throw std::runtime_error("File not found!");
 
 	size_t linesCount = countCharacterOccurances(ifs, '\n');
-	
-	_rowsCount = linesCount + 1;
-	_rows = MyVector<Row>(_rowsCount);
 
-	for (int i = 0; i < _rowsCount; i++)
+	_rows = MyVector<Row>(linesCount + 1);
+
+	for (int i = 0; i <= linesCount; i++)
 	{
 		try
 		{
-			_rows[i].readRowFromFile(ifs);
+			_rows.push_back(Row(ifs));
 		}
 		catch (std::invalid_argument& ex)
 		{
@@ -46,8 +48,31 @@ Table::Table(const char* fileName)
 
 void Table::printTypes() const
 {
-	for (int i = 0; i < _rowsCount; i++)
+	size_t rowsCount = _rows.size();
+	for (int i = 0; i < rowsCount; i++)
 	{
 		_rows[i].printValueTypes();
+	}
+}
+
+unsigned Table::getLongestRowLenght() const
+{
+	unsigned max = 0;
+	size_t rowsCount = _rows.size();
+	for (int i = 0; i < rowsCount; i++)
+	{
+		max = MAX(max, _rows[i].lenght());
+	}
+	return max;
+}
+
+void Table::print() const
+{
+	unsigned longestRowLen = getLongestRowLenght();
+	size_t rowsCount = _rows.size();
+	for (int i = 0; i < rowsCount; i++)
+	{
+		_rows[i].printRow(longestRowLen);
+		std::cout << std::endl;
 	}
 }
