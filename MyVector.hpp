@@ -1,4 +1,3 @@
-//Alexander Glushkov Github
 #pragma once
 #include <iostream>
 
