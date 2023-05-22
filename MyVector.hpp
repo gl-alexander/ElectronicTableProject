@@ -124,6 +124,7 @@ MyVector<T>& MyVector<T>::operator=(MyVector<T>&& other)
 		free();
 		moveFrom(std::move(other));
 	}
+	return *this;
 }
 
 template <typename T>
