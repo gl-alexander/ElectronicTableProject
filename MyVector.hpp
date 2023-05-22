@@ -1,3 +1,4 @@
+//Alexander Glushkov Github
 #pragma once
 #include <iostream>
 
@@ -135,7 +136,7 @@ void MyVector<T>::resize(size_t newCapacity)
 
 
 	T* temp = new T[newCapacity];
-
+	_capacity = newCapacity;
 	for (int i = 0; i < _size; i++)
 	{
 		temp[i] = std::move(_data[i]); // we use the move operator, if T has one
@@ -228,7 +229,7 @@ void MyVector<T>::insert(unsigned index, T&& obj)
 	if (index >= _size)
 		throw std::out_of_range("Index out of range");
 
-	push_back(_data[_size - 1]); 
+	push_back(_data[_size - 1]);
 
 	for (int i = _size - 1; i > index; i--)
 	{
@@ -243,7 +244,7 @@ void MyVector<T>::erase(unsigned index)
 	if (index >= _size)
 		throw std::out_of_range("Index is out of range");
 	_size--;
-	for (int i = index; i < _size; i++) 
+	for (int i = index; i < _size; i++)
 	{
 		_data[i] = std::move(_data[i + 1]);
 	}
