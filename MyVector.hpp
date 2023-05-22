@@ -33,6 +33,11 @@ public:
 
 	void pop_back();
 
+	void insert(unsigned index, const T& obj);
+	void insert(unsigned index, T&& obj);
+
+	void erase(unsigned index);
+
 	bool empty() const;
 	void clear();
 
@@ -51,7 +56,7 @@ void MyVector<T>::copyFrom(const MyVector<T>& other)
 	_data = new T[_capacity];
 	for (int i = 0; i < _size; i++)
 	{
-		_data[i] = other._data[i] // T -> operator=
+		_data[i] = other._data[i]; // T -> operator=
 	}
 }
 
@@ -67,9 +72,9 @@ template <typename T>
 void MyVector<T>::moveFrom(MyVector<T>&& other)
 {
 	_size = other._size;
-	_capacity = other._capacity
-		_data = other._data;
-	delete[] other._data;
+	_capacity = other._capacity;
+	_data = other._data;
+	other._data = nullptr;
 	other._capacity = 0;
 	other._size = 0;
 }
@@ -201,4 +206,44 @@ const T& MyVector<T>::operator[](size_t ind) const
 		throw std::out_of_range("Index is out of range");
 
 	return _data[ind];
+}
+template <typename T>
+void MyVector<T>::insert(unsigned index, const T& obj)
+{
+	if (index >= _size)
+		throw std::out_of_range("Index out of range");
+
+	push_back(_data[_size - 1]); // we add the last element again, this ensures we have enough space and increments size
+
+	for (int i = _size - 1; i > index; i--)
+	{
+		_data[i] = std::move(_data[i - 1]);
+	}
+	_data[index] = obj;
+}
+template <typename T>
+void MyVector<T>::insert(unsigned index, T&& obj)
+{
+	if (index >= _size)
+		throw std::out_of_range("Index out of range");
+
+	push_back(_data[_size - 1]); 
+
+	for (int i = _size - 1; i > index; i--)
+	{
+		_data[i] = std::move(_data[i - 1]);
+	}
+	_data[index] = std::move(obj);
+}
+
+template <typename T>
+void MyVector<T>::erase(unsigned index)
+{
+	if (index >= _size)
+		throw std::out_of_range("Index is out of range");
+	_size--;
+	for (int i = index; i < _size; i++) 
+	{
+		_data[i] = std::move(_data[i + 1]);
+	}
 }
