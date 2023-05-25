@@ -113,7 +113,7 @@ MyVector<T>::~MyVector()
 template <typename T>
 MyVector<T>::MyVector(MyVector<T>&& other)
 {
-	moveFrom(other);
+	moveFrom(std::move(other));
 }
 
 template <typename T>
