@@ -1,11 +1,11 @@
 #pragma once
 #include "Cell.h"
-#include "MyVector.hpp"
+#include "MyCollection.hpp"
 #include <fstream>
 
 class Row
 {
-	MyVector<Cell> _cells;
+	MyCollection<Cell> _cells;
 
 public:
 	Row() = default;
