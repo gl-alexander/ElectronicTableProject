@@ -84,7 +84,7 @@ void MyCollection<T>::resize(size_t newCapacity)
 		newCollection[i] = _data[i]; // we steal the pointers
 	}
 	delete[] _data;
-	_capacity = newCapacity
+	_capacity = newCapacity;
 	_data = newCollection;
 }
 
@@ -174,7 +174,7 @@ void MyCollection<T>::clear()
 	for (int i = 0; i < _size; i++)
 	{
 		delete _data[i];
-		_data[i] = nullptr
+		_data[i] = nullptr;
 	}
 	_size = 0;
 }
