@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+const size_t DEFAULT_CAPACITY = 8;
+
 template <class T>
 class MyCollection
 {
@@ -12,19 +14,23 @@ class MyCollection
 	void free();
 	void copyFrom(const MyCollection<T>& other);
 	void moveFrom(MyCollection<T>&& other);
-	void resize();
+	void resize(size_t newCapacity);
 
 
 
 public:
-	MyCollection();
+	MyCollection() = default;
 	MyCollection(const MyCollection<T>& other);
 	MyCollection(MyCollection<T>&& other) noexcept;
 	MyCollection& operator=(const MyCollection<T>& other);
 	MyCollection& operator=(MyCollection<T>&& other) noexcept;
 	~MyCollection();
 
+	MyCollection(size_t capacity);
+
 	void add(T* obj);
+	void clear();
+	bool isEmpty() const;
 
 	size_t size() const;
 
@@ -68,26 +74,24 @@ void MyCollection<T>::moveFrom(MyCollection<T>&& other)
 }
 
 template <class T>
-void MyCollection<T>::resize()
+void MyCollection<T>::resize(size_t newCapacity)
 {
-	T** newCollection = new T * [_capacity * 2];
+	if (newCapacity == 0) newCapacity = DEFAULT_CAPACITY;
+
+	T** newCollection = new T * [newCapacity];
 	for (int i = 0; i < _size; i++)
 	{
 		newCollection[i] = _data[i]; // we steal the pointers
 	}
 	delete[] _data;
-	_capacity *= 2;
+	_capacity = newCapacity
 	_data = newCollection;
 }
 
-
-
 template <class T>
-MyCollection<T>::MyCollection()
+MyCollection<T>::MyCollection(size_t capacity) : _size(0), _capacity(capacity)
 {
-	_capacity = 8;
-	_size = 0;
-	_data = new T * [_capacity];
+	_data = new T * [capacity];
 }
 
 template <class T>
@@ -159,7 +163,24 @@ template <class T>
 void MyCollection<T>::add(T* obj)
 {
 	if (_size == _capacity)
-		resize();
+		resize(_capacity * 2);
 
 	_data[_size++] = obj;
+}
+
+template <class T>
+void MyCollection<T>::clear()
+{
+	for (int i = 0; i < _size; i++)
+	{
+		delete _data[i];
+		_data[i] = nullptr
+	}
+	_size = 0;
+}
+
+template <class T>
+bool MyCollection<T>::isEmpty() const
+{
+	return _size == 0;
 }
