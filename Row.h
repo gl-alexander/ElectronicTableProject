@@ -1,5 +1,6 @@
 #pragma once
-#include "Cell.h"
+#include "Cells/IncludeCells.h"
+#include "Factory/CellFactory.h"
 #include "Utilities/MyCollection.hpp"
 #include <fstream>
 
