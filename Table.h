@@ -1,6 +1,6 @@
 #pragma once
 #include "Row.h"
-
+#include "Utilities/MyVector.hpp"
 
 class Table
 {
