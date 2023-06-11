@@ -1,9 +1,13 @@
 #pragma once
+#include <iostream>
 #include "../Utilities/MyString.h"
 #include <sstream>
+#include <fstream>
+#include "../Utilities/PrintHelper/PrintHelper.h" // for printing
 
 const size_t BUFFER_LEN = 1024;
 const char SEPARATOR = ',';
+const char PRINT_SEPARATOR = '|';
 
 enum class CellType
 {
@@ -16,17 +20,19 @@ enum class CellType
 
 class Cell
 {
-	MyString _value;
+//	MyString _value;
 	CellType _type;
 
-	void setCellType(const char* str);
 public:
 	Cell() = default;
-	Cell(std::stringstream& ss);
-
-	void setValue(std::stringstream& ss);
+	Cell(const CellType& type);
 
 	const CellType& getType() const;
-	const MyString& getValue() const;
+
+	virtual void printCell(size_t len, std::ostream& os) const = 0;
+
+	virtual Cell* clone() const = 0;
+
+	virtual ~Cell() = default;
 };
 
