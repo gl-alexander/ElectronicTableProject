@@ -10,3 +10,18 @@ void CellFraction::printCell(size_t len, std::ostream& os) const
 	PrintHelper::printWhitespaces(len - valueLen, os);
 	os << PRINT_SEPARATOR;
 }
+
+Cell* CellFraction::clone() const
+{
+	return new CellFraction(*this);
+}
+
+void CellFraction::setValue(double value)
+{
+	_value = value;
+}
+
+double CellFraction::getValue() const
+{
+	return _value;
+}
