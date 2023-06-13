@@ -13,7 +13,7 @@ size_t PrintHelper::intLen(int n)
 	return len;
 }
 
-size_t PrintHelper::doubleLen(double d, size_t decimalPlaces = DECIMAL_PLACES_TO_PRINT)
+size_t PrintHelper::doubleLen(double d, size_t decimalPlaces)
 {
 	int converted = (int)d;
 
@@ -21,7 +21,7 @@ size_t PrintHelper::doubleLen(double d, size_t decimalPlaces = DECIMAL_PLACES_TO
 	
 	len += decimalPlaces + 1; // +1 because we need to print the decimal point .
 
-	return len
+	return len;
 }
 
 void PrintHelper::printCharNTimes(char ch, int count, std::ostream& os)

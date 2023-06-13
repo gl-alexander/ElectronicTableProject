@@ -23,6 +23,8 @@ struct Validation
 
 	static bool validOperator(const char* str);
 
+	static bool validExpression(const char* str);
+
 	static bool validFormula(const char* str);
 
 	static bool validString(const char* str);

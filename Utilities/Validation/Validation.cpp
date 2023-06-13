@@ -107,9 +107,15 @@ bool Validation::validOperator(const char* str)
 	return *str == '+' || *str == '-' || *str == '*' || *str == '/' || *str == '^';
 }
 
+bool Validation::validExpression(const char* str)
+{
+	return false;
+}
+
 bool Validation::validFormula(const char* str)
 {
-	//= {CELL/VALUE} {OPERATOR} {CELL/VALUE}
+	return true;
+	// = ({CELL/VALUE} {OPERATOR} {CELL/VALUE})
 	if (*str != '=') return false;
 	str += 2; //we skip the '= '
 
@@ -125,7 +131,7 @@ bool Validation::validFormula(const char* str)
 	ss.getline(buffer, BUFFER_LEN, ' '); // second value / cell
 	if (!validCellLocation(buffer) && !validInteger(buffer)) return false;
 
-	if (!ss.eof()) return false; // if the string hasn't ended it's not a valid formula
+	//if (!ss.eof()) return false; // if the string hasn't ended it's not a valid formula
 	return true;
 }
 
