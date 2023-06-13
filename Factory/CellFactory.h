@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include "../Cells/IncludeCells.h"
+#include "../Utilities/Validation/Validation.h"
+
 
 const char COMMA_SYMBOL = '.';
 
