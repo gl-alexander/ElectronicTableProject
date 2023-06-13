@@ -1,22 +1,41 @@
-#pragma once
-#include <iostream>
-#include "Cell.h"
+#include "CellString.h"
 
-class CellInteger : public Cell
+CellString::CellString(const MyString& value) : _value(value) {}
+
+
+void CellString::printCell(size_t len, std::ostream& os) const
 {
-	int _value = 0;
-public:
-	CellInteger() = default;
+	os << _value;
+	PrintHelper::printWhitespaces(len - _value.length(), os);
+	os << PRINT_SEPARATOR;
+}
 
-	CellInteger(int value);
+Cell* CellString::clone() const
+{
+	return new CellString(*this);
+}
 
-	void printCell(size_t len, std::ostream& os) const override;
+void CellString::setValue(const MyString& value)
+{
+	_value = value;
+}
 
-	Cell* clone() const override;
+const MyString& CellString::getValue() const
+{
+	return _value;
+}
 
-	void setValue(int value);
-
-	int getValue() const;
-
-	double evaluate() const override;
-};
+double CellString::evaluate() const
+{
+	if (Validation::validDouble(_value.c_str())) // if the value the string holds is a valid double, we parse and return it
+	{
+		std::stringstream ss(_value.c_str());
+		double parsedValue;
+		ss >> parsedValue;
+		return parsedValue;
+	}
+	else
+	{
+		return 0.0;
+	}
+}
