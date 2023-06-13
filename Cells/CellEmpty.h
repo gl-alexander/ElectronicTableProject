@@ -5,9 +5,11 @@
 class CellEmpty : public Cell
 {
 public:
-	CellEmpty();
+	CellEmpty() = default;
 
-	void printCell(size_t len) const override;
+	void printCell(size_t len, std::ostream& os) const override;
 
 	Cell* clone() const override;
+
+	double evaluate() const override;
 };
