@@ -20,7 +20,6 @@ enum class CellType
 
 class Cell
 {
-//	MyString _value;
 	CellType _type;
 
 public:
@@ -34,5 +33,7 @@ public:
 	virtual Cell* clone() const = 0;
 
 	virtual ~Cell() = default;
+
+	virtual double evaluate() const = 0;
 };
 
