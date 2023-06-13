@@ -10,3 +10,8 @@ Cell* CellEmpty::clone() const
 {
 	return new CellEmpty(*this);
 }
+
+double CellEmpty::evaluate() const
+{
+	return 0.0;
+}
