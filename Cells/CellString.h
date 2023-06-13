@@ -1,19 +1,24 @@
 #pragma once
 #include <iostream>
 #include "Cell.h"
-#include "../MyString.h"
+#include "../Utilities/MyString.h"
+#include "../Utilities/Validation/Validation.h"
 
 class CellString : public Cell
 {
-	int _value = 0;
+	MyString _value;
 public:
-	CellString();
+	CellString() = default;
 
-	void printCell(size_t len) const override;
+	CellString(const MyString& value);
+
+	void printCell(size_t len, std::ostream& os) const override;
 
 	Cell* clone() const override;
 
 	void setValue(const MyString& value);
 
 	const MyString& getValue() const;
+
+	double evaluate() const override;
 };
