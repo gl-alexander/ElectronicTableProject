@@ -2,6 +2,7 @@
 
 CellString::CellString(const MyString& value) : _value(value) {}
 
+
 void CellString::printCell(size_t len, std::ostream& os) const
 {
 	os << _value;
@@ -22,4 +23,19 @@ void CellString::setValue(const MyString& value)
 const MyString& CellString::getValue() const
 {
 	return _value;
+}
+
+double CellString::evaluate() const
+{
+	if (Validation::validDouble(_value.c_str())) // if the value the string holds is a valid double, we parse and return it
+	{
+		std::stringstream ss(_value.c_str());
+		double parsedValue;
+		ss >> parsedValue;
+		return parsedValue;
+	}
+	else
+	{
+		return 0.0;
+	}
 }
