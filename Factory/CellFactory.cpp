@@ -1,21 +1,46 @@
 #include "CellFactory.h"
+#pragma warning(disable : 4996)
 
 
-
-static void readAndFormatData(std::stringstream& ss, char* buffer)
+const char* readAndFormatData(std::stringstream& ss)
 {
-	size_t initialPosition = ss.tellg();
-	ss.getline(buffer, BUFFER_LEN, SEPARATOR);
-	ss.seekg(initialPosition);
-	ss.clear();
+	char buffer[BUFFER_LEN] = { 0 };
+	ss.getline(buffer, BUFFER_LEN, SEPARATOR); // this is what moves the get pointer to the next cell
 
 	size_t len = strlen(buffer);
-	int leadingWhiteSpaces = countLeadingSymbols(buffer, ' ');
-	int endingWhiteSpaces = countEndSymbols(buffer, len, ' ');
+	int leadingWhiteSpaces = Validation::countLeadingSymbols(buffer, ' ');
+	int endingWhiteSpaces = Validation::countEndSymbols(buffer, len, ' ');
 
 	buffer[len - endingWhiteSpaces] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
-	buffer += leadingWhiteSpaces;
+	return buffer + leadingWhiteSpaces;
 }
+
+
+Cell* CellFactory::createIntegerCell(const char* str)
+{
+	std::stringstream ss(str);
+	int value;
+	ss >> value;
+
+	return new CellInteger(value);
+}
+Cell* CellFactory::createStringCell(const char* str)
+{
+	return new CellString(str);
+}
+Cell* CellFactory::createFractionCell(const char* str)
+{
+	std::stringstream ss(str);
+	double value;
+	ss >> value;
+
+	return new CellFraction(value);
+}
+Cell* CellFactory::createFormulaCell(const char* str)
+{
+	return new CellFormula(str);
+}
+
 
 const CellType& CellFactory::getType(const char* str)
 {
@@ -35,45 +60,13 @@ const CellType& CellFactory::getType(const char* str)
 	}
 }
 
-Cell* CellFactory::createIntegerCell(std::stringstream& ss)
-{
-	int value;
-	ss >> value;
-
-	if (!ss.eof()) throw std::logic_error("Too many arguments passed!");
-
-	return new CellInteger(value);
-}
-Cell* CellFactory::createStringCell(std::stringstream& ss)
-{
-	MyString value;
-	ss >> value;
-
-	if (!ss.eof()) throw std::logic_error("Too many arguments passed!");
-
-	return new CellString(value);
-}
-Cell* CellFactory::createFractionCell(std::stringstream& ss)
-{
-	double value;
-	ss >> value;
-	
-	if (!ss.eof()) throw std::logic_error("Too many arguments passed!"); // if we have more data after reading, then the input is incorrect
-
-	return new CellFraction(value);
-}
-Cell* CellFactory::createFormulaCell(std::stringstream& ss)
-{
-	//TBD
-	return nullptr;
-}
 
 Cell* CellFactory::createCell(std::stringstream& ss)
 {
 	
 	char buffer[BUFFER_LEN] = { 0 };
-
-	readAndFormatData(ss, buffer); // reads and formats the data
+	strcpy(buffer, readAndFormatData(ss));
+	 // reads and formats the data to the next separator ','
 
 	CellType type = CellType::empty;
 
@@ -95,12 +88,12 @@ Cell* CellFactory::createCell(std::stringstream& ss)
 	case CellType::empty:
 		return new CellEmpty(); break;
 	case CellType::integer:
-		return createIntegerCell(ss); break;
+		return createIntegerCell(buffer); break;
 	case CellType::fraction:
-		return createFractionCell(ss); break;
+		return createFractionCell(buffer); break;
 	case CellType::string:
-		return createStringCell(ss); break;
+		return createStringCell(buffer); break;
 	case CellType::formula:
-		return createFormulaCell(ss); break;
+		return createFormulaCell(buffer); break;
 	}
 }
