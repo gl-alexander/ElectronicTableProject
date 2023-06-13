@@ -1,7 +1,7 @@
 #include "CellInteger.h"
 
 
-CellInteger::CellInteger(int value) : _value(value) {}
+CellInteger::CellInteger(int value) : _value(value) { std::cout << "yo"; }
 
 void CellInteger::printCell(size_t len, std::ostream& os) const
 {
@@ -22,6 +22,11 @@ void CellInteger::setValue(int value)
 }
 
 int CellInteger::getValue() const
+{
+	return _value;
+}
+
+double CellInteger::evaluate() const
 {
 	return _value;
 }
