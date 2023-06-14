@@ -1,4 +1,36 @@
 #include "Row.h"
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+
+//To be removed
+void Row::printValueTypes() const
+{
+	unsigned cellsCount = _cells.size();
+	for (int i = 0; i < cellsCount; i++)
+	{
+		switch (_cells[i]->getType())
+		{
+		case CellType::empty:
+			std::cout << "empty ";
+			break;
+		case CellType::integer:
+			std::cout << "integer ";
+			break;
+		case CellType::string:
+			std::cout << "string ";
+			break;
+		case CellType::fraction:
+			std::cout << "fraction ";
+			break;
+		case CellType::formula:
+			std::cout << "formula ";
+			break;
+		default:
+			std::cout << "Unknown ";
+		}
+	}
+	std::cout << std::endl;
+}
 
 static int countCharOccurances(const char* buffer, char ch)
 {
@@ -46,6 +78,18 @@ Row::Row(std::ifstream& ifs)
 	readRowFromFile(ifs);
 }
 
+Cell* Row::operator[](int ind)
+{
+	if (ind >= _cells.size()) throw std::out_of_range("Index was out of range");
+	return _cells[ind];
+}
+
+const Cell* Row::operator[](int ind) const
+{
+	if (ind >= _cells.size()) throw std::out_of_range("Index was out of range");
+	return _cells[ind];
+}
+
 void Row::readRowFromFile(std::ifstream& ifs)
 {
 	char buffer[BUFFER_LEN];
@@ -56,11 +100,10 @@ void Row::readRowFromFile(std::ifstream& ifs)
 
 	if (inputLenght == 0)
 	{
-		_cells.clear();
 		return;
 	}
 	
-	_cells = MyVector<Cell>(separatorsCount + 1); // if there are n separators, we have n + 1 cells
+	_cells = MyCollection<Cell>(separatorsCount + 1); // if there are n separators, we have n + 1 cells
 	
 	std::stringstream ss(buffer);
 
@@ -68,7 +111,8 @@ void Row::readRowFromFile(std::ifstream& ifs)
 	{
 		try
 		{
-			_cells.push_back(Cell(ss));
+			_cells.add(CellFactory::createCell(ss));
+
 		}
 		catch (std::invalid_argument& ex)
 		{
@@ -79,53 +123,43 @@ void Row::readRowFromFile(std::ifstream& ifs)
 
 			throw std::invalid_argument(errorMessage.c_str());
 		}
+		//possibly add logic_error catch for too many arguments
 	}
 }
 
 
-void Row::printValueTypes() const
-{
-	unsigned cellsCount = _cells.size();
-	for (int i = 0; i < cellsCount; i++)
-	{
-		switch (_cells[i].getType())
-		{
-		case CellType::empty:
-			std::cout << "empty ";
-			break;
-		case CellType::integer:
-			std::cout << "integer ";
-			break;
-		case CellType::string:
-			std::cout << "string ";
-			break;
-		case CellType::fraction:
-			std::cout << "fraction ";
-			break;
-		case CellType::formula:
-			std::cout << "formula ";
-			break;
-		default:
-			std::cout << "Unknown ";
-		}
-	}
-	std::cout << std::endl;
-}
+
 
 unsigned Row::lenght() const
 {
 	return _cells.size();
 }
 
-void Row::printRow(size_t margin) const
+unsigned Row::getLongestCell() const
 {
 	size_t cellsCount = _cells.size();
-	for (int i = 0; i < margin; i++)
+	unsigned longestCell = 0;
+	for (int i = 0; i < cellsCount; i++)
 	{
-		if (i >= cellsCount)
+		longestCell = MAX(longestCell, _cells[i]->getLenght());
+	}
+	return longestCell;
+}
+
+void Row::printRow(size_t rowLen, size_t cellLen, std::ostream& os) const
+{
+	size_t cellsCount = _cells.size();
+	os << PRINT_SEPARATOR;
+	for (int i = 0; i < rowLen; i++)
+	{
+		if (i < cellsCount)
 		{
-			std::cout << " " << SEPARATOR;
+			_cells[i]->printCell(cellLen, os);
 		}
-		std::cout << _cells[i].getValue() << SEPARATOR;
+		else
+		{
+			PrintHelper::printWhitespaces(cellLen, os);
+		}
+		os << PRINT_SEPARATOR;
 	}
 }

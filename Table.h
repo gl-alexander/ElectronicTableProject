@@ -8,6 +8,7 @@ class Table
 {
 	MyVector<Row> _rows;
 
+
 	void readFromFile(const char* fileName);
 	unsigned getLongestRowLenght() const;
 	unsigned getLongestCell() const;

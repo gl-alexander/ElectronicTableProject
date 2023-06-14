@@ -48,8 +48,25 @@ void Table::readFromFile(const char* fileName)
 
 Table::Table(const char* fileName)
 {
-	readFromFile(fileName);
-	parseFromulas();
+	try
+	{
+		readFromFile(fileName);
+	}
+	catch (std::runtime_error& ex)
+	{
+		std::cout << ex.what();
+	}
+
+
+	try
+	{
+		parseFromulas();
+	}
+	catch (std::logic_error& ex)
+	{
+		std::cout << "Invalid Formula at cell location " << ex.what();
+	}
+
 }
 
 void Table::printTypes() const
@@ -91,7 +108,7 @@ void Table::print(std::ostream& os) const
 
 	for (int i = 0; i < rowsCount; i++)
 	{
-		_rows[i].printRow(longestRowLen, 20, os);
+		_rows[i].printRow(longestRowLen, longestCell, os);
 		std::cout << std::endl;
 	}
 }
@@ -109,6 +126,15 @@ void Table::parseFormula(CellFormula* formula)
 	StringView expressionStrView = extractExpression(formula->getExpressionString()); // skips the '=' and whitespaces before the expression
 	Expression* expr = ExpressionFactory::getInstance()->createExpression(expressionStrView);
 	formula->setExpressionObject(expr);
+
+	try
+	{
+		formula->evaluate();
+	}
+	catch (std::logic_error& ex)
+	{
+		throw;
+	}
 }
 
 void Table::parseFromulas()
@@ -122,7 +148,18 @@ void Table::parseFromulas()
 		{
 			if (_rows[i][j]->getType() == CellType::formula)
 			{
-				parseFormula(static_cast<CellFormula*>(_rows[i][j]));
+				try
+				{
+					parseFormula(static_cast<CellFormula*>(_rows[i][j])); // if the formula is invalid
+				}
+				catch (std::logic_error& ex)
+				{
+					MyString errorCellLocationString = "R";
+					errorCellLocationString += intToString(i + 1);
+					errorCellLocationString += "C";
+					errorCellLocationString += intToString(j + 1);
+					throw std::logic_error(errorCellLocationString.c_str());
+				}
 			}
 		}
 	}
