@@ -8,13 +8,15 @@ class CellString : public Cell
 {
 	MyString _value;
 public:
-	CellString() = default;
+	CellString();
 
 	CellString(const MyString& value);
 
 	void printCell(size_t len, std::ostream& os) const override;
 
 	Cell* clone() const override;
+
+	size_t getLenght() const;
 
 	void setValue(const MyString& value);
 

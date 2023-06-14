@@ -8,12 +8,10 @@ CellFormula::CellFormula(const MyString& expression) : Cell(CellType::formula), 
 
 void CellFormula::printCell(size_t len, std::ostream& os) const
 {
-	os.precision(PrintHelper::DECIMAL_PLACES_TO_PRINT);
 	double result = evaluate();
-	size_t valueLen = PrintHelper::doubleLen(result, PrintHelper::DECIMAL_PLACES_TO_PRINT);
+	size_t valueLen = PrintHelper::doubleLen(result);
 	os << result;
 	PrintHelper::printWhitespaces(len - valueLen, os);
-	os << PRINT_SEPARATOR;
 }
 
 Cell* CellFormula::clone() const
@@ -21,11 +19,21 @@ Cell* CellFormula::clone() const
 	return new CellFormula(*this);
 }
 
-
+size_t CellFormula::getLenght() const
+{
+	return PrintHelper::doubleLen(_expression->evaluate());
+}
 
 double CellFormula::evaluate() const
 {
-	return _expression->evaluate();
+	try
+	{
+		return _expression->evaluate();
+	}
+	catch (std::logic_error& ex)
+	{
+		throw;
+	}
 }
 
 const MyString& CellFormula::getExpressionString() const

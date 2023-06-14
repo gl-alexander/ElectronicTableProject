@@ -28,7 +28,8 @@ public:
 
 	Cell* clone() const override;
 
-	
+	size_t getLenght() const;
+
 
 	double evaluate() const override;
 

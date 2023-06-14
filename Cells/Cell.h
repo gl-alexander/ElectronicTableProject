@@ -5,7 +5,6 @@
 #include <fstream>
 #include "../Utilities/PrintHelper/PrintHelper.h" // for printing
 
-const size_t BUFFER_LEN = 1024;
 const char SEPARATOR = ',';
 const char PRINT_SEPARATOR = '|';
 
@@ -35,5 +34,7 @@ public:
 	virtual ~Cell() = default;
 
 	virtual double evaluate() const = 0;
+
+	virtual size_t getLenght() const = 0;
 };
 

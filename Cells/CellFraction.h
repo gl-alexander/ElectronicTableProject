@@ -2,11 +2,13 @@
 #include <iostream>
 #include "Cell.h"
 
+
+
 class CellFraction : public Cell
 {
-	double _value;
+	double _value  = 0;
 public:
-	CellFraction() = default;
+	CellFraction();
 
 	CellFraction(double value);
 
@@ -14,10 +16,14 @@ public:
 
 	Cell* clone() const override;
 
+	size_t getLenght() const;
+
 	void setValue(double value);
 
 	double getValue() const;
 
 	double evaluate() const override;
+
+	
 };
 

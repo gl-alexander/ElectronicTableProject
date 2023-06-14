@@ -6,13 +6,15 @@ class CellInteger : public Cell
 {
 	int _value = 0;
 public:
-	CellInteger() = default;
+	CellInteger();
 
 	CellInteger(int value);
 
 	void printCell(size_t len, std::ostream& os) const override;
 
 	Cell* clone() const override;
+
+	size_t getLenght() const;
 
 	void setValue(int value);
 

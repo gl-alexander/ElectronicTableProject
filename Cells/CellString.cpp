@@ -1,18 +1,25 @@
 #include "CellString.h"
 
-CellString::CellString(const MyString& value) : _value(value) {}
+CellString::CellString() : Cell(CellType::string)
+{}
+
+CellString::CellString(const MyString& value) : Cell(CellType::string), _value(value) {}
 
 
 void CellString::printCell(size_t len, std::ostream& os) const
 {
 	os << _value;
 	PrintHelper::printWhitespaces(len - _value.length(), os);
-	os << PRINT_SEPARATOR;
 }
 
 Cell* CellString::clone() const
 {
 	return new CellString(*this);
+}
+
+size_t CellString::getLenght() const
+{
+	return _value.length();
 }
 
 void CellString::setValue(const MyString& value)

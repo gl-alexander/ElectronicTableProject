@@ -1,19 +1,26 @@
 #include "CellInteger.h"
 
 
-CellInteger::CellInteger(int value) : _value(value) { std::cout << "yo"; }
+CellInteger::CellInteger() : Cell(CellType::integer)
+{}
+
+CellInteger::CellInteger(int value) : Cell(CellType::integer), _value(value) {}
 
 void CellInteger::printCell(size_t len, std::ostream& os) const
 {
 	size_t valueLen = PrintHelper::intLen(_value);
 	os << _value;
 	PrintHelper::printWhitespaces(len - valueLen, os);
-	os << PRINT_SEPARATOR;
 }
 
 Cell* CellInteger::clone() const 
 {
 	return new CellInteger(*this);
+}
+
+size_t CellInteger::getLenght() const
+{
+	return PrintHelper::intLen(_value);
 }
 
 void CellInteger::setValue(int value)
