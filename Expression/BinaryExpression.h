@@ -8,8 +8,10 @@ class BinaryExpression : public Expression
 	char operation;
 public: 
 	BinaryExpression() = default;
-	BinaryExpression(Expression* left, Expression* right, char operation);
+	BinaryExpression(char operation, Expression* left, Expression* right);
 	double evaluate() const override;
 	Expression* clone() const override;
+
+	~BinaryExpression();
 };
 
