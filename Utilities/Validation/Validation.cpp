@@ -46,6 +46,12 @@ bool Validation::isDigit(char ch)
 	return ch >= '0' && ch <= '9';
 }
 
+bool Validation::isOperator(char ch)
+{
+	return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^';
+}
+
+
 bool Validation::validInteger(const char* str)
 {
 	if (str[0] == '-' || str[0] == '+') // we can skip the first symbol if it's either a + or -
@@ -54,6 +60,20 @@ bool Validation::validInteger(const char* str)
 	{
 		if (!isDigit(*str)) return false;
 		str++;
+	}
+	return true;
+}
+
+bool Validation::validInteger(const StringView& str)
+{
+	size_t i = 0;
+	if (str[0] == '-' || str[0] == '+') // we can skip the first symbol if it's either a + or -
+		i++;
+
+	size_t size = str.length();
+	for (; i < size; i++)
+	{
+		if (!isDigit(str[i])) return false;
 	}
 	return true;
 }
@@ -84,6 +104,30 @@ bool Validation::validDouble(const char* str)
 	return true;
 }
 
+bool Validation::validDouble(const StringView& str)
+{
+	unsigned countCommas = 0;
+	size_t i = 0;
+	if (str[0] == '-' || str[0] == '+') // we can skip the first symbol if it's either a + or -
+		i++;
+	size_t size = str.length();
+	for (; i < size; i++)
+	{
+		if (!isDigit(str[i]))
+		{
+			if (str[i] == DECIMAL_SYMBOL)
+			{
+				countCommas++;
+				if (countCommas > 1) return false;
+			}
+			else
+				return false;
+
+		}
+	}
+	return true;
+}
+
 bool Validation::validCellLocation(const char* str)
 {
 	if (*str != 'R') return false;
@@ -101,10 +145,28 @@ bool Validation::validCellLocation(const char* str)
 	}
 	return true;
 }
-
-bool Validation::validOperator(const char* str)
+bool Validation::validCellLocation(const StringView& str)
 {
-	return *str == '+' || *str == '-' || *str == '*' || *str == '/' || *str == '^';
+	if (str[0] != 'R') return false;
+	size_t i = 1; // we start from the 2nd character, skipping the R
+	if (!isDigit(str[i])) return false; // if the 2nd character isn't a number then it's an invalid cell location
+	while (isDigit(str[i]))
+	{
+		i++; // we skip the digits
+	}
+	if (str[i] != 'C') return false;
+	i++; // we skip the 'C'
+	size_t size = str.length();
+	for (; i < size; i++)
+	{
+		if (!isDigit(str[i])) return false;
+	}
+	return true;
+}
+
+bool Validation::validOperator(char ch)
+{
+	return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^';
 }
 
 bool Validation::validExpression(const char* str)
@@ -114,7 +176,7 @@ bool Validation::validExpression(const char* str)
 
 bool Validation::validFormula(const char* str)
 {
-	return true;
+	return (*str == '=');
 	// = ({CELL/VALUE} {OPERATOR} {CELL/VALUE})
 	if (*str != '=') return false;
 	str += 2; //we skip the '= '
@@ -126,7 +188,7 @@ bool Validation::validFormula(const char* str)
 	if (!validCellLocation(buffer) && !validInteger(buffer)) return false;
 
 	ss.getline(buffer, BUFFER_LEN, ' '); // operator
-	if (!validOperator(buffer)) return false;
+	//if (!validOperator(buffer)) return false;
 
 	ss.getline(buffer, BUFFER_LEN, ' '); // second value / cell
 	if (!validCellLocation(buffer) && !validInteger(buffer)) return false;

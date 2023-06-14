@@ -1,4 +1,5 @@
 #pragma once
+#include "../StringView.h"
 #include <iostream>
 #include <sstream>
 
@@ -15,13 +16,18 @@ struct Validation
 
 	static bool isDigit(char ch);
 
+	static bool isOperator(char ch);
+
 	static bool validInteger(const char* str);
+	static bool validInteger(const StringView& str);
 
 	static bool validDouble(const char* str);
+	static bool validDouble(const StringView& str);
 
 	static bool validCellLocation(const char* str);
+	static bool validCellLocation(const StringView& str);
 
-	static bool validOperator(const char* str);
+	static bool validOperator(char ch);
 
 	static bool validExpression(const char* str);
 
