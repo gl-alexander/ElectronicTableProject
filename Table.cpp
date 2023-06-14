@@ -1,4 +1,5 @@
 #include "Table.h"
+#include "Utilities/ParseHelper/ParseHelper.h"
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -36,6 +37,10 @@ void Table::readFromFile(const char* fileName)
 		}
 		catch (std::invalid_argument& ex)
 		{
+			// check for missing comma . . .
+			// for cycle, checking for valid value type from the input ex.what()
+			// if not found, output unknown data type error
+
 			std::cout << "Error: row " << i << ", " << ex.what() << " is unknown data type\n";
 		}
 	}
@@ -44,6 +49,7 @@ void Table::readFromFile(const char* fileName)
 Table::Table(const char* fileName)
 {
 	readFromFile(fileName);
+	parseFromulas();
 }
 
 void Table::printTypes() const
@@ -57,22 +63,67 @@ void Table::printTypes() const
 
 unsigned Table::getLongestRowLenght() const
 {
-	unsigned max = 0;
+	unsigned longestRow = 0;
 	size_t rowsCount = _rows.size();
 	for (int i = 0; i < rowsCount; i++)
 	{
-		max = MAX(max, _rows[i].lenght());
+		longestRow = MAX(longestRow, _rows[i].lenght());
 	}
-	return max;
+	return longestRow;
 }
 
-void Table::print() const
+unsigned Table::getLongestCell() const
 {
-	unsigned longestRowLen = getLongestRowLenght();
+	unsigned longestCell = 0;
 	size_t rowsCount = _rows.size();
 	for (int i = 0; i < rowsCount; i++)
 	{
-		_rows[i].printRow(longestRowLen);
+		longestCell = MAX(longestCell, _rows[i].getLongestCell());
+	}
+	return longestCell;
+}
+
+void Table::print(std::ostream& os) const
+{
+	unsigned longestRowLen = getLongestRowLenght();
+	unsigned longestCell = getLongestCell();
+	size_t rowsCount = _rows.size();
+
+	for (int i = 0; i < rowsCount; i++)
+	{
+		_rows[i].printRow(longestRowLen, 20, os);
 		std::cout << std::endl;
+	}
+}
+
+const Cell* Table::getCellByLocation(size_t rowInd, size_t colInd) const
+{
+	if (rowInd > _rows.size()) return nullptr;
+	if (colInd > _rows[rowInd - 1].lenght()) return nullptr;
+	//if we reach this part then the coordinates are within range
+	return _rows[rowInd - 1][colInd - 1]; // we start counting from 1, 1
+}
+
+void Table::parseFormula(CellFormula* formula)
+{
+	StringView expressionStrView = extractExpression(formula->getExpressionString()); // skips the '=' and whitespaces before the expression
+	Expression* expr = ExpressionFactory::getInstance()->createExpression(expressionStrView);
+	formula->setExpressionObject(expr);
+}
+
+void Table::parseFromulas()
+{
+	
+	ExpressionFactory::getInstance()->passGetCellFunction(&Table::getCellByLocation, this);
+
+	for (int i = 0; i < _rows.size(); i++)
+	{
+		for (int j = 0; j < _rows[i].lenght(); j++)
+		{
+			if (_rows[i][j]->getType() == CellType::formula)
+			{
+				parseFormula(static_cast<CellFormula*>(_rows[i][j]));
+			}
+		}
 	}
 }
