@@ -2,20 +2,25 @@
 #include <iostream>
 #include "Cell.h"
 #include "../Utilities/MyVector.hpp"
+#include "../Expression/Expression.h"
+
 
 class CellFormula : public Cell
 {
-	//stack of cells
-	//stack of operators
-	MyString _expression;
+	MyString _expressionString;
 
-	MyVector<Cell> _cells;
-	MyVector<char> _operators;
+	Expression* _expression = nullptr; // dynamic data, needs to be managed by CellFormula
 
-	Cell* _left;
-	Cell* _right;
+	void copyFrom(const CellFormula& other);
+	void moveFrom(CellFormula&& other);
+	void free();
 public:
-	CellFormula() = default;
+	CellFormula();
+	CellFormula(const CellFormula& other);
+	CellFormula(CellFormula&& other);
+	CellFormula& operator=(const CellFormula& other);
+	CellFormula& operator=(CellFormula&& other);
+	~CellFormula();
 
 	CellFormula(const MyString& expression);
 
@@ -23,12 +28,16 @@ public:
 
 	Cell* clone() const override;
 
-	void setValue(const MyString& value);
-
-	void parseInput(std::stringstream& ss);
+	
 
 	double evaluate() const override;
 
-	double getValue() const;
+	const MyString& getExpressionString() const;
+
+	void setExpressionString(const MyString& value);
+	void setExpressionString(MyString&& value);
+
+	void setExpressionObject(Expression* expr);
+
 };
 
