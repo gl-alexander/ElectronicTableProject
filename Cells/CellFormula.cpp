@@ -14,6 +14,11 @@ void CellFormula::printCell(size_t len, std::ostream& os) const
 	PrintHelper::printWhitespaces(len - valueLen, os);
 }
 
+void CellFormula::saveToFile(std::ofstream& ofs) const
+{
+	ofs << _expressionString; // needs to save the expression string rather than the coresponding value
+}
+
 Cell* CellFormula::clone() const
 {
 	return new CellFormula(*this);

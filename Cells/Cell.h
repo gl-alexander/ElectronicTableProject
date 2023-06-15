@@ -29,6 +29,8 @@ public:
 
 	virtual void printCell(size_t len, std::ostream& os) const = 0;
 
+	virtual void saveToFile(std::ofstream& ofs) const = 0;
+
 	virtual Cell* clone() const = 0;
 
 	virtual ~Cell() = default;

@@ -12,6 +12,17 @@ void CellString::printCell(size_t len, std::ostream& os) const
 	PrintHelper::printWhitespaces(len - _value.length(), os);
 }
 
+void CellString::saveToFile(std::ofstream& ofs) const
+{
+	size_t strlen = _value.length();
+	for (int i = 0; i < strlen; i++)
+	{
+		if (_value[i] == '\"') // if there's ' " ' in the string it needs to have '\' before it
+			ofs << '\\'; // we need to print the '\' we skipped when reading
+		ofs << _value[i];
+	}
+}
+
 Cell* CellString::clone() const
 {
 	return new CellString(*this);

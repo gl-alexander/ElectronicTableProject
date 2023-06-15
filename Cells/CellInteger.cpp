@@ -13,6 +13,11 @@ void CellInteger::printCell(size_t len, std::ostream& os) const
 	PrintHelper::printWhitespaces(len - valueLen, os);
 }
 
+void CellInteger::saveToFile(std::ofstream& ofs) const
+{
+	ofs << _value;
+}
+
 Cell* CellInteger::clone() const 
 {
 	return new CellInteger(*this);

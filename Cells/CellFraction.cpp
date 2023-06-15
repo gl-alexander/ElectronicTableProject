@@ -13,6 +13,11 @@ void CellFraction::printCell(size_t len, std::ostream& os) const
 	PrintHelper::printWhitespaces(len - valueLen, os);
 }
 
+void CellFraction::saveToFile(std::ofstream& ofs) const
+{
+	ofs << _value;
+}
+
 Cell* CellFraction::clone() const
 {
 	return new CellFraction(*this);
