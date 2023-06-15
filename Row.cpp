@@ -163,3 +163,14 @@ void Row::printRow(size_t rowLen, size_t cellLen, std::ostream& os) const
 		os << PRINT_SEPARATOR;
 	}
 }
+
+void Row::saveToFile(std::ofstream& ofs) const
+{
+	size_t cellsCount = _cells.size();
+	for (int i = 0; i < cellsCount; i++)
+	{
+		_cells[i]->saveToFile(ofs);
+		if (i < cellsCount - 1)
+			ofs << SEPARATOR;
+	}
+}

@@ -18,13 +18,14 @@ static int countCharacterOccurances(std::ifstream& ifs, char ch)
 	return counter;
 }
 
-void Table::readFromFile(const char* fileName)
+void Table::readFromFile(const MyString& fileName)
 {
-	std::ifstream ifs(fileName, std::ios::in);
+	std::ifstream ifs(fileName.c_str(), std::ios::in);
 
 	if (!ifs.is_open())
 		throw std::runtime_error("File not found!");
 
+	
 	size_t linesCount = countCharacterOccurances(ifs, '\n');
 
 	_rows = MyVector<Row>(linesCount + 1);
@@ -44,9 +45,11 @@ void Table::readFromFile(const char* fileName)
 			std::cout << "Error: row " << i << ", " << ex.what() << " is unknown data type\n";
 		}
 	}
+	filePath = fileName; // saving the filename
+	ifs.close();
 }
 
-Table::Table(const char* fileName)
+Table::Table(const MyString& fileName)
 {
 	try
 	{
@@ -119,6 +122,20 @@ const Cell* Table::getCellByLocation(size_t rowInd, size_t colInd) const
 	if (colInd > _rows[rowInd - 1].lenght()) return nullptr;
 	//if we reach this part then the coordinates are within range
 	return _rows[rowInd - 1][colInd - 1]; // we start counting from 1, 1
+}
+
+void Table::saveToFile(const MyString& filePath) const
+{
+	std::ofstream ofs(filePath.c_str(), std::ios::out);
+	if (!ofs.is_open())
+		throw std::invalid_argument("Cannot open file for editing!");
+	size_t rowsCount = _rows.size();
+	for (int i = 0; i < rowsCount; i++)
+	{
+		_rows[i].saveToFile(ofs);
+		ofs << std::endl;
+	}
+
 }
 
 void Table::parseFormula(CellFormula* formula)
