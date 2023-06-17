@@ -19,6 +19,7 @@ public:
 
 	Cell* operator[](int ind);
 	const Cell* operator[](int ind) const;
+	void add(Cell* cell);
 
 	unsigned lenght() const;
 	unsigned getLongestCell() const;

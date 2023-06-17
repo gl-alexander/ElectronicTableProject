@@ -90,6 +90,11 @@ const Cell* Row::operator[](int ind) const
 	return _cells[ind];
 }
 
+void Row::add(Cell* cell) // adds a cell to the end of the row
+{
+	_cells.add(cell);
+}
+
 void Row::readRowFromFile(std::ifstream& ifs)
 {
 	char buffer[BUFFER_LEN];
