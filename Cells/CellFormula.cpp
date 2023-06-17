@@ -58,6 +58,7 @@ void CellFormula::setExpressionString(MyString&& value)
 
 void CellFormula::setExpressionObject(Expression* expr)
 {
+	if (_expression) delete _expression; // if _expression string isn't nullptr we delete it
 	_expression = expr;
 }
 
