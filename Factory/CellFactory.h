@@ -8,13 +8,12 @@ const char COMMA_SYMBOL = '.';
 
 class CellFactory
 {
-	static const CellType& getType(const char* str);
-
 	static Cell* createIntegerCell(const char* str);
 	static Cell* createStringCell(const char* str);
 	static Cell* createFractionCell(const char* str);
 	static Cell* createFormulaCell(const char* str);
 
 public:
+	static const CellType& getType(const char* str);
 	static Cell* createCell(std::stringstream& ss);
 };
