@@ -2,6 +2,7 @@
 #include "Cells/IncludeCells.h"
 #include "Factory/CellFactory.h"
 #include "Utilities/MyCollection.hpp"
+#include "Utilities/ParseHelper/ParseHelper.h"
 #include <fstream>
 
 const char SEPARATOR = ',';
@@ -17,7 +18,7 @@ public:
 	Row(std::ifstream& ifs);
 	
 
-	Cell* operator[](int ind);
+	Cell*& operator[](int ind);
 	const Cell* operator[](int ind) const;
 	void add(Cell* cell);
 

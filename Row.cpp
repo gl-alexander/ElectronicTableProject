@@ -32,45 +32,6 @@ void Row::printValueTypes() const
 	std::cout << std::endl;
 }
 
-static int countCharOccurances(const char* buffer, char ch)
-{
-	unsigned count = 0;
-	while (*buffer)
-	{
-		if (*(buffer++) == ch) count++;
-	}
-	return count;
-}
-
-static char convertToChar(int n)
-{
-	return '0' + n;
-}
-
-static unsigned countDigits(int num)
-{
-	if (num == 0) return 1;
-	int count = 0;
-	while (num > 0)
-	{
-		count++;
-		num /= 10;
-	}
-	return count;
-}
-
-static const char* converToString(int num)
-{
-	unsigned len = countDigits(num);
-	char* str = new char[len + 1];
-	for (int i = len - 1; i >= 0; i--)
-	{
-		str[i] = convertToChar(num % 10);
-		num /= 10;
-	}
-	str[len] = '\0';
-	return str;
-}
 
 
 Row::Row(std::ifstream& ifs)
@@ -78,7 +39,7 @@ Row::Row(std::ifstream& ifs)
 	readRowFromFile(ifs);
 }
 
-Cell* Row::operator[](int ind)
+Cell*& Row::operator[](int ind)
 {
 	if (ind >= _cells.size()) throw std::out_of_range("Index was out of range");
 	return _cells[ind];
@@ -105,7 +66,7 @@ void Row::readRowFromFile(std::ifstream& ifs)
 
 	if (inputLenght == 0)
 	{
-		return;
+		return; // empty row
 	}
 	
 	_cells = MyCollection<Cell>(separatorsCount + 1); // if there are n separators, we have n + 1 cells
@@ -121,7 +82,7 @@ void Row::readRowFromFile(std::ifstream& ifs)
 		}
 		catch (std::invalid_argument& ex)
 		{
-			const char* columnIndStr = converToString(i);
+			const char* columnIndStr = intToString(i);
 
 			MyString errorMessage = "col " + MyString(columnIndStr) + " " + MyString(ex.what());
 			delete[] columnIndStr;
