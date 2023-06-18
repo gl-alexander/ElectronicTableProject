@@ -23,7 +23,7 @@ void Table::readFromFile(const MyString& fileName)
 	std::ifstream ifs(fileName.c_str(), std::ios::in);
 
 	if (!ifs.is_open())
-		throw std::runtime_error("File not found!");
+		throw std::invalid_argument("File not found!");
 
 	_filePath = fileName; // saving the filename
 	size_t linesCount = countCharacterOccurances(ifs, '\n');
@@ -45,17 +45,16 @@ void Table::readFromFile(const MyString& fileName)
 			ss >> buffer; // skips the column#
 			ss >> buffer; // gets the invalid value;
 			size_t valueLen = strlen(buffer);
-			for (int i = 1; i < valueLen; i++)
+			for (int j = 1; j < valueLen; j++)
 			{
 				char removed = buffer[i];
 				buffer[i] = '\0';
 				if (Validation::validValue(buffer))
-					throw; // dopiship
+				{
+					MyString errorMessage = "Missing comma (,) at row " + MyString(intToString(i)) + " " + MyString(intToString(i));
+					throw std::runtime_error(errorMessage.c_str());
+				}		
 			}
-			// check for missing comma . . .
-			// for cycle, checking for valid value type from the input ex.what()
-			// if not found, output unknown data type error
-
 
 			MyString errorMsg = "Error: row " + MyString(intToString(i)) + ex.what() + " is unknown data type\n";
 			throw std::runtime_error(errorMsg.c_str());
@@ -71,11 +70,14 @@ Table::Table(const MyString& fileName)
 	{
 		readFromFile(fileName);
 	}
-	catch (std::runtime_error& ex)
+	catch (std::invalid_argument& ex) // invalid file name
 	{
 		throw;
 	}
-
+	catch (std::runtime_error& ex) // invalid value
+	{
+		throw;
+	}
 
 	try
 	{
@@ -117,7 +119,6 @@ void Table::printFirstRow(std::ostream& os) const
 	size_t cellsLen = _printingWidths.size();
 	for (int i = 0; i < cellsLen; i++)
 	{
-		//os << i + 1;
 		PrintHelper::printCharNTimes('_', _printingWidths[i] + 1, os);
 	}
 }
