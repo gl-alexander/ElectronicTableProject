@@ -38,25 +38,30 @@ void Table::readFromFile(const MyString& fileName)
 		}
 		catch (std::invalid_argument& ex)
 		{
-			// exception message looks like col: # [invalid value string]
+			// exception message looks like col: # --- [invalid value string]
+
 			std::stringstream ss(ex.what());
 			char buffer[BUFFER_LEN] = { 0 };
-			ss >> buffer; // skips "col::
-			ss >> buffer; // skips the column#
-			ss >> buffer; // gets the invalid value;
+			ss >> buffer >> buffer >> buffer; // skips "col:: column# ---
+			ss.ignore(); // skis the space
+			ss.getline(buffer, BUFFER_LEN); // gets the invalid value;
 			size_t valueLen = strlen(buffer);
+			char tempF[BUFFER_LEN];
+			char tempS[BUFFER_LEN];
+
 			for (int j = 1; j < valueLen; j++)
-			{
-				char removed = buffer[i];
-				buffer[i] = '\0';
-				if (Validation::validValue(buffer))
+			{	
+				substr(buffer, 0, j, tempF); // reads the first part of the problem value
+				substr(buffer, j, valueLen - j, tempS); // reads the second part
+
+				if (Validation::validValue(tempF) && Validation::validValue(tempS))
 				{
-					MyString errorMessage = "Missing comma (,) at row " + MyString(intToString(i)) + " " + MyString(intToString(i));
+					MyString errorMessage = "Missing comma (,) at row: " + MyString(intToString(i)) +  " should look like: " + tempF + " , " + tempS;
 					throw std::runtime_error(errorMessage.c_str());
-				}		
+				}
 			}
 
-			MyString errorMsg = "Error: row " + MyString(intToString(i)) + ex.what() + " is unknown data type\n";
+			MyString errorMsg = "Error: row: " + MyString(intToString(i)) + " " + ex.what() + " is unknown data type\n";
 			throw std::runtime_error(errorMsg.c_str());
 		}
 	}
