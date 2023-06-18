@@ -15,6 +15,6 @@ public:
 	Command() = default;
 	virtual ~Command() = default;
 
-	virtual void execute(Table* table) const = 0;
+	virtual void execute(Table*& table) const = 0;
 };
 

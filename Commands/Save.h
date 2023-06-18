@@ -3,6 +3,6 @@
 class Save : public Command
 {
 public:
-	void execute(Table* table) const override;
+	void execute(Table*& table) const override;
 };
 
