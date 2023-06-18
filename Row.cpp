@@ -84,7 +84,7 @@ void Row::readRowFromFile(std::ifstream& ifs)
 		{
 			const char* columnIndStr = intToString(i);
 
-			MyString errorMessage = "col " + MyString(columnIndStr) + " " + MyString(ex.what());
+			MyString errorMessage = "col: " + MyString(columnIndStr) + " " + MyString(ex.what());
 			delete[] columnIndStr;
 
 			throw std::invalid_argument(errorMessage.c_str());
@@ -112,7 +112,7 @@ unsigned Row::getLongestCell() const
 	return longestCell;
 }
 
-void Row::printRow(size_t rowLen, size_t cellLen, std::ostream& os) const
+void Row::printRow(size_t rowLen, const MyVector<int>& printWidths, std::ostream& os) const
 {
 	size_t cellsCount = _cells.size();
 	os << PRINT_SEPARATOR;
@@ -120,11 +120,11 @@ void Row::printRow(size_t rowLen, size_t cellLen, std::ostream& os) const
 	{
 		if (i < cellsCount)
 		{
-			_cells[i]->printCell(cellLen, os);
+			_cells[i]->printCell(printWidths[i], os);
 		}
 		else
 		{
-			PrintHelper::printWhitespaces(cellLen, os);
+			PrintHelper::printWhitespaces(printWidths[i], os);
 		}
 		os << PRINT_SEPARATOR;
 	}

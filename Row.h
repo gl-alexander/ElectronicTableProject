@@ -2,6 +2,7 @@
 #include "Cells/IncludeCells.h"
 #include "Factory/CellFactory.h"
 #include "Utilities/MyCollection.hpp"
+#include "Utilities/MyVector.hpp"
 #include "Utilities/ParseHelper/ParseHelper.h"
 #include <fstream>
 
@@ -25,7 +26,7 @@ public:
 	unsigned lenght() const;
 	unsigned getLongestCell() const;
 
-	void printRow(size_t rowLen, size_t cellLen, std::ostream& os) const;
+	void printRow(size_t rowLen, const MyVector<int>& printWidths, std::ostream& os) const;
 
 	void saveToFile(std::ofstream& ofs) const;
 
