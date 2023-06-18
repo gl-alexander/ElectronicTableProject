@@ -5,8 +5,7 @@
 #include <fstream>
 #include "../Utilities/PrintHelper/PrintHelper.h" // for printing
 
-const char SEPARATOR = ',';
-const char PRINT_SEPARATOR = '|';
+
 
 enum class CellType
 {
