@@ -12,6 +12,8 @@ void Edit::execute(Table*& table) const
 	}
 	catch (std::invalid_argument& ex)
 	{
-		std::cout << ex.what();
+		std::cout << ex.what() << std::endl;
 	}
+
+	std::cout << "Cell edited successfully" << std::endl;
 }
