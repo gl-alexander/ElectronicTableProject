@@ -1,6 +1,6 @@
 #pragma once
 #include "Command.h"
-class Open : Command
+class Open : public Command
 {
 	MyString path;
 public:

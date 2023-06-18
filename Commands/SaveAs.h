@@ -1,6 +1,6 @@
 #pragma once
 #include "Command.h"
-class SaveAs : Command
+class SaveAs : public Command
 {
 	MyString path;
 public:
