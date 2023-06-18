@@ -1,19 +1,11 @@
-#include "Edit.h"
-
-Edit::Edit(const MyString& cellLocation, const MyString& newValue) : cellLocation(cellLocation), newValue(newValue)
-{}
-
-void Edit::execute(Table*& table) const
+#pragma once
+#include "Command.h"
+class Edit : public Command
 {
-	if(table == nullptr) throw std::logic_error("No table has been opened!");
-	try
-	{
-		table->editCell(cellLocation, newValue);
-	}
-	catch (std::invalid_argument& ex)
-	{
-		throw;
-	}
+	MyString cellLocation;
+	MyString newValue;
+public:
+	Edit(const MyString& cellLocation, const MyString& newValue);
+	void execute(Table*& table) const override;
+};
 
-	std::cout << "Cell edited successfully" << std::endl;
-}

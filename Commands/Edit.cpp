@@ -12,7 +12,7 @@ void Edit::execute(Table*& table) const
 	}
 	catch (std::invalid_argument& ex)
 	{
-		std::cout << ex.what() << std::endl;
+		throw;
 	}
 
 	std::cout << "Cell edited successfully" << std::endl;

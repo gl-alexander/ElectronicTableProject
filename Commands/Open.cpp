@@ -13,12 +13,18 @@ void Open::execute(Table*& table) const
 	{
 		table = new Table(path);
 	}
-	catch (std::runtime_error& exc) // problem with filename or values
+	catch (std::invalid_argument& ex) // invalid file name
 	{
-		std::cout << exc.what();
+		std::cout << ex.what() << std::endl;
+	}
+	catch (std::runtime_error& exc) // problem with values
+	{
+		throw;
 	}
 	catch (std::logic_error& exc) // problem when parsing formulas
 	{
-		std::cout << exc.what();
+		throw;
 	}
+
+	std::cout << "Table opened successfully!" << std::endl;
 }
