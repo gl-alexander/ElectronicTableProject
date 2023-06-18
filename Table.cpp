@@ -1,5 +1,5 @@
 #include "Table.h"
-#include "Utilities/ParseHelper/ParseHelper.h"
+
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -25,7 +25,7 @@ void Table::readFromFile(const MyString& fileName)
 	if (!ifs.is_open())
 		throw std::runtime_error("File not found!");
 
-	
+	_filePath = fileName; // saving the filename
 	size_t linesCount = countCharacterOccurances(ifs, '\n');
 
 	_rows = MyVector<Row>(linesCount + 1);
@@ -38,14 +38,30 @@ void Table::readFromFile(const MyString& fileName)
 		}
 		catch (std::invalid_argument& ex)
 		{
+			// exception message looks like col: # [invalid value string]
+			std::stringstream ss(ex.what());
+			char buffer[BUFFER_LEN] = { 0 };
+			ss >> buffer; // skips "col::
+			ss >> buffer; // skips the column#
+			ss >> buffer; // gets the invalid value;
+			size_t valueLen = strlen(buffer);
+			for (int i = 1; i < valueLen; i++)
+			{
+				char removed = buffer[i];
+				buffer[i] = '\0';
+				if (Validation::validValue(buffer))
+					throw; // dopiship
+			}
 			// check for missing comma . . .
 			// for cycle, checking for valid value type from the input ex.what()
 			// if not found, output unknown data type error
 
-			std::cout << "Error: row " << i << ", " << ex.what() << " is unknown data type\n";
+
+			MyString errorMsg = "Error: row " + MyString(intToString(i)) + ex.what() + " is unknown data type\n";
+			throw std::runtime_error(errorMsg.c_str());
 		}
 	}
-	_filePath = fileName; // saving the filename
+	
 	ifs.close();
 }
 
@@ -57,7 +73,7 @@ Table::Table(const MyString& fileName)
 	}
 	catch (std::runtime_error& ex)
 	{
-		std::cout << ex.what();
+		throw;
 	}
 
 
@@ -67,18 +83,11 @@ Table::Table(const MyString& fileName)
 	}
 	catch (std::logic_error& ex)
 	{
-		std::cout << "Invalid Formula at cell location " << ex.what();
+		MyString errorMsg = "Invalid Formula at cell location ";
+		errorMsg += ex.what();
+		throw std::logic_error(errorMsg.c_str());
 	}
 
-}
-
-void Table::printTypes() const
-{
-	size_t rowsCount = _rows.size();
-	for (int i = 0; i < rowsCount; i++)
-	{
-		_rows[i].printValueTypes();
-	}
 }
 
 unsigned Table::getLongestRowLenght() const
@@ -152,11 +161,14 @@ const MyString& Table::getTableFilePath() const
 
 void Table::editCell(const MyString& cellLocation, const MyString& newValue)
 {
+	//Validation
 	if (!Validation::validCellLocation(cellLocation)) throw std::invalid_argument("Invalid Cell Location");
+	if (!Validation::validValue(newValue.c_str())) throw std::invalid_argument("Invalid value passed");
+
 	size_t row, col;
 	row = col = 0;
 	getRowAndColumn(cellLocation.c_str(), row, col); // saves row and column indexes from the passed location;
-	const Cell* cell = getCellByLocation(row, col);
+	const Cell* cell = getCellByLocation(row, col); // checks if it's within bounds and returns nullptr if it isn't
 
 	if (cell) // there's already a cell at this location
 	{
@@ -166,6 +178,8 @@ void Table::editCell(const MyString& cellLocation, const MyString& newValue)
 	{
 		addNewCell(row - 1, col - 1, newValue);
 	}
+
+	parseFromulas(); // we need to parse the formulas again
 }
 void Table::editExistingCell(size_t row, size_t col, const MyString& newValue)
 {
@@ -185,20 +199,21 @@ void Table::editExistingCell(size_t row, size_t col, const MyString& newValue)
 
 void Table::addNewCell(size_t row, size_t col, const MyString& newValue)
 {
-	if (row > _rows.size()) // we need to add more rows
+	// row and col are passed as indexes
+	if (row >= _rows.size()) // we need to add more rows
 	{
 		size_t currentSize = _rows.size();
-		for (int i = currentSize; i < row; i++)
+		for (int i = currentSize; i <= row; i++)
 		{
 			_rows.push_back(Row()); // we add empty Rows until we have enough
 		}
 	}
-	if (col > _rows[row].lenght())
+	if (col >= _rows[row].lenght())
 	{
 		size_t currentSize = _rows[row].lenght();
-		for (int i = currentSize; i < col; i++)
+		for (int i = currentSize; i <= col; i++)
 		{
-			_rows[row].add(nullptr); // we add nullpointers
+			_rows[row].add(nullptr); // and we fill the row we need with nullptrs
 		}
 	}
 	// by this point we have enough rows and colums to add the new cell
@@ -209,18 +224,28 @@ void Table::addNewCell(size_t row, size_t col, const MyString& newValue)
 // we make use of the already created cell*, passing only the new values
 void Table::editSameType(Cell* cell, const MyString& newValue)
 {
+	CellInteger* integer = nullptr;
+	CellFraction* fraction = nullptr;
+	CellString* str = nullptr;
+	CellFormula* formula = nullptr;
 	switch (cell->getType())
 	{
 	case CellType::integer:
-		*cell = CellInteger(toInt(newValue.c_str())); break;
+		integer = static_cast<CellInteger*>(cell);
+		*integer = CellInteger(toInt(newValue.c_str())); break;
+
 	case CellType::fraction:
-		*cell = CellFraction(toDouble(newValue.c_str())); break;
+		fraction = static_cast<CellFraction*>(cell);
+		*fraction = CellFraction(toDouble(newValue.c_str())); break;
+
 	case CellType::string:
-		*cell = CellString(parseString(newValue.c_str())); break;
+		str = static_cast<CellString*>(cell);
+		*str = CellString(parseString(newValue.c_str())); break;
+
 	case CellType::formula:
-		CellFormula* casted = static_cast<CellFormula*>(cell);
-		casted->setExpressionString(newValue);
-		casted->setExpressionObject(ExpressionFactory::getInstance()->createExpression(extractExpression(newValue)));
+		formula = static_cast<CellFormula*>(cell);
+		formula->setExpressionString(newValue);
+		formula->setExpressionObject(ExpressionFactory::getInstance()->createExpression(extractExpression(newValue)));
 		break;
 	} // if we get an emptyCell we don't need to do anything
 }
