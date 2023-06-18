@@ -87,7 +87,7 @@ Table::Table(const MyString& fileName)
 		errorMsg += ex.what();
 		throw std::logic_error(errorMsg.c_str());
 	}
-
+	setPrintingWidths();
 }
 
 unsigned Table::getLongestRowLenght() const
@@ -112,6 +112,29 @@ unsigned Table::getLongestCell() const
 	return longestCell;
 }
 
+void Table::printFirstRow(std::ostream& os) const
+{
+	size_t cellsLen = _printingWidths.size();
+	for (int i = 0; i < cellsLen; i++)
+	{
+		//os << i + 1;
+		PrintHelper::printCharNTimes('_', _printingWidths[i] + 1, os);
+	}
+}
+
+void Table::printSeparatorRow(std::ostream& os) const
+{
+	size_t cellsLen = _printingWidths.size();
+	os << PRINT_SEPARATOR;
+	for (int i = 0; i < cellsLen; i++)
+	{
+		PrintHelper::printCharNTimes('_', _printingWidths[i], os);
+		os << PRINT_SEPARATOR;
+	}
+	os << std::endl;
+}
+
+
 void Table::print(std::ostream& os) const
 {
 	
@@ -119,16 +142,19 @@ void Table::print(std::ostream& os) const
 	unsigned longestCell = getLongestCell();
 
 	os << '>' << _filePath;
-	//PrintHelper::printCharNTimes('.', longestRowLen * (longestCell + 1) - _filePath.length(), os);
+
+	os << std::endl << std::endl;;
+
+	printFirstRow(os);
 	os << std::endl;
 
-	PrintHelper::printCharNTimes('_', longestRowLen * (longestCell + 1), os);
-	os << std::endl;
 	size_t rowsCount = _rows.size();
 	for (int i = 0; i < rowsCount; i++)
 	{
-		_rows[i].printRow(longestRowLen, longestCell, os);
+		//os << i + 1;
+		_rows[i].printRow(longestRowLen, _printingWidths, os);
 		os << std::endl;
+		printSeparatorRow(os);
 	}
 }
 
@@ -142,14 +168,15 @@ const Cell* Table::getCellByLocation(size_t rowInd, size_t colInd) const
 
 void Table::saveToFile(const MyString& filePath) const
 {
-	std::ofstream ofs(filePath.c_str(), std::ios::out);
+	std::ofstream ofs(filePath.c_str(), std::ios::out | std::ios::trunc);
+
 	if (!ofs.is_open())
 		throw std::invalid_argument("Cannot open file for editing!");
 	size_t rowsCount = _rows.size();
 	for (int i = 0; i < rowsCount; i++)
 	{
 		_rows[i].saveToFile(ofs);
-		ofs << std::endl;
+		if(i < rowsCount - 1) ofs << std::endl;
 	}
 
 }
@@ -180,6 +207,7 @@ void Table::editCell(const MyString& cellLocation, const MyString& newValue)
 	}
 
 	parseFromulas(); // we need to parse the formulas again
+	setPrintingWidths(); // and check for printing widths
 }
 void Table::editExistingCell(size_t row, size_t col, const MyString& newValue)
 {
@@ -249,6 +277,25 @@ void Table::editSameType(Cell* cell, const MyString& newValue)
 		break;
 	} // if we get an emptyCell we don't need to do anything
 }
+
+void Table::setPrintingWidths()
+{
+	_printingWidths.clear();
+	size_t longestRow = getLongestRowLenght();
+	for (int i = 0; i < longestRow; i++)
+		_printingWidths.push_back(DEFAULT_CELL_LEN);
+
+	size_t rows = _rows.size();
+	for (int i = 0; i < rows; i++)
+	{
+		size_t currentLen = _rows[i].lenght();
+		for (int j = 0; j < currentLen; j++)
+		{
+			_printingWidths[j] = MAX(_printingWidths[j], _rows[i][j]->getLenght()); // gets the longest cell in column
+		}
+	}
+}
+
 
 
 void Table::parseFormula(CellFormula* formula)
