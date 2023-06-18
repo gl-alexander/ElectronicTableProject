@@ -9,7 +9,7 @@ struct Validation
 {
 	static int countLeadingSymbols(const char* str, char sym);
 
-	static int countEndSymbols(const char* str, int len, char sym);
+	static int countEndSymbols(const char* str, char sym);
 
 	static bool emptyString(const char* str);
 
@@ -34,5 +34,7 @@ struct Validation
 	static bool validFormula(const char* str);
 
 	static bool validString(const char* str);
+
+	static bool validValue(const char* str);
 };
 

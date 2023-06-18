@@ -1,6 +1,20 @@
 #include "Validation.h"
+#pragma warning(disable : 4996)
 
 const char DECIMAL_SYMBOL = '.';
+
+static void formatData(const char* str, char* dest)
+{
+	char buffer[BUFFER_LEN];
+	strcpy(buffer, str); // this is what moves the get pointer to the next cell
+
+	size_t len = strlen(buffer);
+	int leadingWhiteSpaces = Validation::countLeadingSymbols(buffer, ' ');
+	int endingWhiteSpaces = Validation::countEndSymbols(buffer, ' ');
+
+	buffer[len - endingWhiteSpaces] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
+	strcpy(dest, buffer + leadingWhiteSpaces);
+}
 
 int Validation::countLeadingSymbols(const char* str, char sym)
 {
@@ -13,9 +27,10 @@ int Validation::countLeadingSymbols(const char* str, char sym)
 	return count;
 }
 
-int Validation::countEndSymbols(const char* str, int len, char sym)
+int Validation::countEndSymbols(const char* str, char sym)
 {
 	int count = 0;
+	size_t len = strlen(str);
 	for (int i = len - 1; i >= 0; i--)
 	{
 		if (str[i] != sym) break;
@@ -32,7 +47,7 @@ bool Validation::emptyString(const char* str)
 	if (len == 0) return true;
 
 	int leadingWhiteSpaces = countLeadingSymbols(str, ' ');
-	int endingWhitSpaces = countEndSymbols(str, len, ' ');
+	int endingWhitSpaces = countEndSymbols(str, ' ');
 
 	if (leadingWhiteSpaces + endingWhitSpaces == len) return true;
 
@@ -199,7 +214,18 @@ bool Validation::validFormula(const char* str)
 
 bool Validation::validString(const char* str)
 {
-	if (*str != '"') return false;
-	if (*(str + strlen(str) - 1) != '"') return false; //strings start and end with "
+	if (*str != '"' || *(str + strlen(str) - 1) != '"') return false;
+	size_t len = strlen(str);
+	for (int i = 1; i < len - 1; i++)
+	{
+		if (str[i] == '"' && str[i - 1] != '\\') return false; // checks for escapes
+	}
 	return true;
+}
+
+bool Validation::validValue(const char* str)
+{
+	char formatted[BUFFER_LEN];
+	formatData(str, formatted);
+	return validDouble(formatted) || validInteger(formatted) || validString(formatted) || validFormula(formatted) || emptyString(formatted);
 }
