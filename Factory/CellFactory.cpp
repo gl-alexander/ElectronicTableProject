@@ -1,10 +1,11 @@
 #include "CellFactory.h"
+#include "../Utilities/ParseHelper/ParseHelper.h"
 #pragma warning(disable : 4996)
 
+static const char SEPARATOR = ',';
 
-const char* readAndFormatData(std::stringstream& ss)
+void readAndFormatData(std::stringstream& ss, char buffer[])
 {
-	char buffer[BUFFER_LEN] = { 0 };
 	ss.getline(buffer, BUFFER_LEN, SEPARATOR); // this is what moves the get pointer to the next cell
 
 	size_t len = strlen(buffer);
@@ -12,7 +13,7 @@ const char* readAndFormatData(std::stringstream& ss)
 	int endingWhiteSpaces = Validation::countEndSymbols(buffer, len, ' ');
 
 	buffer[len - endingWhiteSpaces] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
-	return buffer + leadingWhiteSpaces;
+	buffer += leadingWhiteSpaces;
 }
 
 
@@ -26,7 +27,7 @@ Cell* CellFactory::createIntegerCell(const char* str)
 }
 Cell* CellFactory::createStringCell(const char* str)
 {
-	return new CellString(str);
+	return new CellString(parseString(str));
 }
 Cell* CellFactory::createFractionCell(const char* str)
 {
@@ -57,6 +58,7 @@ const CellType& CellFactory::getType(const char* str)
 	else
 	{
 		throw std::invalid_argument(str); // no suitable type was found
+		// we pass str as the unknown type
 	}
 }
 
@@ -65,9 +67,8 @@ Cell* CellFactory::createCell(std::stringstream& ss)
 {
 	
 	char buffer[BUFFER_LEN] = { 0 };
-	strcpy(buffer, readAndFormatData(ss));
+	readAndFormatData(ss, buffer);
 	 // reads and formats the data to the next separator ','
-
 	CellType type = CellType::empty;
 
 	try 
@@ -77,10 +78,6 @@ Cell* CellFactory::createCell(std::stringstream& ss)
 	catch (std::invalid_argument& ex) // catches if getType doesn't find a suitable type
 	{
 		throw;
-	}
-	catch (std::logic_error& ex) // catches if too many arguments have been passed 
-	{
-		std::cout << ex.what();
 	}
 	
 	switch (type)
