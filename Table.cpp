@@ -242,7 +242,7 @@ void Table::addNewCell(size_t row, size_t col, const MyString& newValue)
 		size_t currentSize = _rows[row].lenght();
 		for (int i = currentSize; i <= col; i++)
 		{
-			_rows[row].add(nullptr); // and we fill the row we need with nullptrs
+			_rows[row].add(new CellEmpty()); // and we fill the row we need with empty cells
 		}
 	}
 	// by this point we have enough rows and colums to add the new cell
@@ -317,14 +317,13 @@ void Table::parseFormula(CellFormula* formula)
 
 void Table::parseFromulas()
 {
-	
 	ExpressionFactory::getInstance()->passGetCellFunction(&Table::getCellByLocation, this);
 
 	for (int i = 0; i < _rows.size(); i++)
 	{
 		for (int j = 0; j < _rows[i].lenght(); j++)
 		{
-			if (_rows[i][j]->getType() == CellType::formula)
+			if (_rows[i][j] && _rows[i][j]->getType() == CellType::formula)
 			{
 				try
 				{
