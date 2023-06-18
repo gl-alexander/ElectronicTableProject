@@ -2,38 +2,6 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
-//To be removed
-void Row::printValueTypes() const
-{
-	unsigned cellsCount = _cells.size();
-	for (int i = 0; i < cellsCount; i++)
-	{
-		switch (_cells[i]->getType())
-		{
-		case CellType::empty:
-			std::cout << "empty ";
-			break;
-		case CellType::integer:
-			std::cout << "integer ";
-			break;
-		case CellType::string:
-			std::cout << "string ";
-			break;
-		case CellType::fraction:
-			std::cout << "fraction ";
-			break;
-		case CellType::formula:
-			std::cout << "formula ";
-			break;
-		default:
-			std::cout << "Unknown ";
-		}
-	}
-	std::cout << std::endl;
-}
-
-
-
 Row::Row(std::ifstream& ifs)
 {
 	readRowFromFile(ifs);

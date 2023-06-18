@@ -29,9 +29,5 @@ public:
 	void printRow(size_t rowLen, const MyVector<int>& printWidths, std::ostream& os) const;
 
 	void saveToFile(std::ofstream& ofs) const;
-
-	//to be removed:
-	void printValueTypes() const;
-
 };
 
