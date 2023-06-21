@@ -50,7 +50,7 @@ void Row::readRowFromFile(std::ifstream& ifs)
 		}
 		catch (std::invalid_argument& ex)
 		{
-			MyString errorMessage = "col: " + MyString(intToString(i)) + " --- " + MyString(ex.what());
+			MyString errorMessage = "col: " + MyString(intToString(i + 1)) + " --- " + MyString(ex.what());
 			throw std::invalid_argument(errorMessage.c_str());
 		}
 		//possibly add logic_error catch for too many arguments
