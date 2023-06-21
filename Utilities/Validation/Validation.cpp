@@ -169,7 +169,7 @@ bool Validation::validCellLocation(const StringView& str)
 	{
 		i++; // we skip the digits
 	}
-	if (str[i] != 'C' && str[0] != 'c') return false;
+	if (str[i] != 'C' && str[i] != 'c') return false;
 	i++; // we skip the 'C'
 	size_t size = str.length();
 	for (; i < size; i++)
