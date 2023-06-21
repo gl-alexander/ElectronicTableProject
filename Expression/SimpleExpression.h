@@ -1,15 +1,12 @@
 #pragma once
 #include "Expression.h"
 
-union Value
-{
-	const Cell* cell = nullptr;
-	double fraction;
-};
+
 
 class SimpleExpression : public Expression
 {
-	Value value;
+	const Cell* cell = nullptr;
+	double fraction = 0;
 public: 
 	SimpleExpression() = default;
 	SimpleExpression(double value);
