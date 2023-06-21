@@ -25,12 +25,12 @@ size_t PrintHelper::intLen(int n)
 {
 	if (n == 0) return 1;
 	size_t len = 0;
+	if (n < 0) len++; // if n is negative, then we need to print the minus sign
 	while (n != 0)
 	{
 		len++;
 		n /= 10;
 	}
-	if (n < 0) len++; // if n is negative, then we need to print the minus sign
 	return len;
 }
 
@@ -52,15 +52,13 @@ size_t PrintHelper::doubleLen(double num)
 {
 	int converted = (int)num;
 	if (abs(num - converted) < EPSILON) return intLen(converted); // the double is the same as the its int representation
-
-
 	size_t len = 0;
-	if (num < 0) len++;
-	num = abs(num);
-	
-	len += intLen(converted);
+	if (num < 0) len++; // if it's negative we account for the minus;
+	num = abs(num); // we then work with the positive value
 
-	double difference = num - converted;
+	len += intLen(num);
+
+	double difference = num - int(num);
 	
 	size_t places = decimalPlaces(abs(difference));
 	
