@@ -15,7 +15,7 @@ void Open::execute(Table*& table) const
 	}
 	catch (std::invalid_argument& ex) // invalid file name
 	{
-		std::cout << ex.what() << std::endl;
+		throw;
 	}
 	catch (std::runtime_error& exc) // problem with values
 	{
