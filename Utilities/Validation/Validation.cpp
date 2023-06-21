@@ -145,13 +145,13 @@ bool Validation::validDouble(const StringView& str)
 
 bool Validation::validCellLocation(const char* str)
 {
-	if (*str != 'R') return false;
+	if (*str != 'R' && *str != 'r') return false;
 	str++; // we skip the 'R'
 	while (isDigit(*str))
 	{
 		str++; // we skip the digits
 	}
-	if (*str != 'C') return false;
+	if (*str != 'C' && *str != 'c') return false;
 	str++; // we skip the 'C'
 	while (*str)
 	{
@@ -162,14 +162,14 @@ bool Validation::validCellLocation(const char* str)
 }
 bool Validation::validCellLocation(const StringView& str)
 {
-	if (str[0] != 'R') return false;
+	if (str[0] != 'R' && str[0] != 'r') return false;
 	size_t i = 1; // we start from the 2nd character, skipping the R
 	if (!isDigit(str[i])) return false; // if the 2nd character isn't a number then it's an invalid cell location
 	while (isDigit(str[i]))
 	{
 		i++; // we skip the digits
 	}
-	if (str[i] != 'C') return false;
+	if (str[i] != 'C' && str[0] != 'c') return false;
 	i++; // we skip the 'C'
 	size_t size = str.length();
 	for (; i < size; i++)
