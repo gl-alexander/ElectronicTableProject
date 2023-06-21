@@ -56,12 +56,12 @@ void Table::readFromFile(const MyString& fileName)
 
 				if (Validation::validValue(tempF) && Validation::validValue(tempS))
 				{
-					MyString errorMessage = "Missing comma (,) at row: " + MyString(intToString(i)) +  " should look like: " + tempF + " , " + tempS;
+					MyString errorMessage = "Missing comma (,) at row: " + MyString(intToString(i + 1)) +  " should look like: " + tempF + " , " + tempS;
 					throw std::runtime_error(errorMessage.c_str());
 				}
 			}
 
-			MyString errorMsg = "Error: row: " + MyString(intToString(i)) + " " + ex.what() + " is unknown data type\n";
+			MyString errorMsg = "Error: row: " + MyString(intToString(i + 1)) + " " + ex.what() + " is unknown data type\n";
 			throw std::runtime_error(errorMsg.c_str());
 		}
 	}
