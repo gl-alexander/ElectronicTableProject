@@ -10,7 +10,7 @@ CommandType CommandFactory::getCommandType(std::stringstream& ss)
     if (commandName == "open") return CommandType::OPEN;
     else if (commandName == "print") return CommandType::PRINT;
     else if (commandName == "save") return CommandType::SAVE;
-    else if (commandName == "save_as") return CommandType::SAVE_AS;
+    else if (commandName == "saveas") return CommandType::SAVE_AS;
     else if (commandName == "edit") return CommandType::EDIT;
     else if (commandName == "close") return CommandType::CLOSE;
     else if (commandName == "exit") return CommandType::EXIT;
@@ -37,7 +37,12 @@ Edit* CommandFactory::createEditCommand(std::stringstream& ss)
 {
     MyString cellLocation, newValue;
     ss >> cellLocation;
-    ss >> newValue;
+    while (ss.peek() == ' ') ss.ignore();
+
+    char buffer[BUFFER_LEN];
+    ss.getline(buffer, BUFFER_LEN);
+    newValue = buffer;
+    
     return new Edit(cellLocation, newValue);
 }
 
