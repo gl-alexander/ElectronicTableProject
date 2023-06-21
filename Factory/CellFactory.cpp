@@ -10,7 +10,7 @@ void readAndFormatData(std::stringstream& ss, char buffer[])
 
 	size_t len = strlen(buffer);
 	int leadingWhiteSpaces = Validation::countLeadingSymbols(buffer, ' ');
-	int endingWhiteSpaces = Validation::countEndSymbols(buffer, len, ' ');
+	int endingWhiteSpaces = Validation::countEndSymbols(buffer, ' ');
 
 	buffer[len - endingWhiteSpaces] = '\0'; // this 'cuts' the buffer at the last non-whitespace symbol
 	buffer += leadingWhiteSpaces;
