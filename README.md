@@ -1,6 +1,6 @@
 # Excel Table C++ Console Implementation
 
-![icon](https://github.com/gl-alexander/ElectronicTableProject/blob/main/xc%2B%2B.png?raw=true)
+<img src="https://github.com/gl-alexander/ElectronicTableProject/blob/main/xc%2B%2B.png" alt="icon" width="200"/>
 
 ## Console interface Excell Table implementation
 
