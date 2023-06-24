@@ -48,17 +48,19 @@ const MyString& CellFormula::getExpressionString() const
 
 void CellFormula::setExpressionString(const MyString& value)
 {
+	free();
 	_expressionString = value;
 }
 
 void CellFormula::setExpressionString(MyString&& value)
 {
+	free();
 	_expressionString = std::move(value);
 }
 
 void CellFormula::setExpressionObject(Expression* expr)
 {
-	if (_expression) delete _expression; // if _expression string isn't nullptr we delete it
+	if (_expression) free(); // if _expression string isn't nullptr we delete it
 	_expression = expr;
 }
 
@@ -77,7 +79,7 @@ void CellFormula::moveFrom(CellFormula&& other)
 }
 void CellFormula::free()
 {
-	delete this->_expression;
+	delete _expression;
 }
 
 CellFormula::CellFormula(const CellFormula& other)
